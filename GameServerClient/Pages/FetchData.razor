@@ -1,0 +1,43 @@
+﻿@page "/fetchdata"
+@using System.Text.Json;
+@inject HttpClient HttpClient
+
+<MudTable Items="forecasts" TItem="WeatherForecast">
+    <HeaderContent>
+        <MudTh>Temperature (°C)</MudTh>
+        <MudTh>Summary</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.TemperatureC</MudTd>
+        <MudTd>@context.Summary</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private WeatherForecast[] forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await HttpClient.GetAsync("WeatherForecast");
+        if (response.IsSuccessStatusCode)
+        {
+            var json = await response.Content.ReadAsStringAsync();
+            forecasts = JsonSerializer.Deserialize<WeatherForecast[]>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+        }
+        else
+        {
+            // Handle the error case if the response is not successful
+            // You can display an error message or handle it as per your application's requirements
+        }
+    }
+
+    public class WeatherForecast
+    {
+        public int TemperatureC { get; set; }
+
+        public string? Summary { get; set; }
+    }
+}
