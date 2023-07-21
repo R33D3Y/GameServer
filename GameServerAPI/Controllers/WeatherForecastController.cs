@@ -18,7 +18,7 @@ namespace GameServerAPI.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
+        [HttpGet(Name = "WeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
             _logger.LogDebug("GetRequest");

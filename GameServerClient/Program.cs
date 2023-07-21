@@ -8,7 +8,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 // Set the base address for the HttpClient
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5246") });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:6001") });
 
 builder.Services.AddMudServices();
 
