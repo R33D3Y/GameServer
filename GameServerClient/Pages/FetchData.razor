@@ -1,37 +1,72 @@
 ﻿@page "/fetchdata"
 @using System.Text.Json;
+@using CommonModels;
 @inject HttpClient HttpClient
 
-<MudTable Items="forecasts" TItem="WeatherForecast">
+<MudTable Items="games" TItem="Games">
     <HeaderContent>
-        <MudTh>Temperature (°C)</MudTh>
-        <MudTh>Summary</MudTh>
+        <MudTh>Name</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.TemperatureC</MudTd>
-        <MudTd>@context.Summary</MudTd>
+        <MudTd>@context.Name</MudTd>
     </RowTemplate>
 </MudTable>
 
+<MudCard>
+    <MudCardContent>
+        <h3>Click the button to execute Steam CMD:</h3>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ExecuteMainMethod">Execute Main</MudButton>
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <p>@message</p>
+        }
+    </MudCardContent>
+</MudCard>
+
 @code {
-    private WeatherForecast[] forecasts;
+    private Game[] games;
+    private string message;
+    private const string GameConstant = "game";
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await HttpClient.GetAsync("WeatherForecast");
+        var response = await HttpClient.GetAsync(Route(GameConstant, "GetGames"));
         if (response.IsSuccessStatusCode)
         {
             var json = await response.Content.ReadAsStringAsync();
-            forecasts = JsonSerializer.Deserialize<WeatherForecast[]>(json, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+
+            if (json is not null)
+            {
+                games = JsonSerializer.Deserialize<Game[]>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+            }
         }
         else
         {
             // Handle the error case if the response is not successful
             // You can display an error message or handle it as per your application's requirements
         }
+    }
+
+    private async Task ExecuteMainMethod()
+    {
+        HttpResponseMessage response = await HttpClient.GetAsync(Route(GameConstant, "StartSteamCMD"));
+        if (response.IsSuccessStatusCode)
+        {
+            message = await response.Content.ReadAsStringAsync();
+        }
+        else
+        {
+            message = "Failed to execute StartSteamCMD!";
+        }
+    }
+
+    private string Route(string route, string endpoint)
+    {
+        return $"{route}/{endpoint}";
     }
 
     public class WeatherForecast

@@ -1,4 +1,6 @@
+using CommonModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace GameServerAPI.Controllers
 {
@@ -7,14 +9,16 @@ namespace GameServerAPI.Controllers
     public class GameController : ControllerBase
     {
         private readonly ILogger<GameController> _logger;
+        private GameService _gameService;
 
         public GameController(ILogger<GameController> logger)
         {
             _logger = logger;
+            _gameService = new GameService();
         }
 
-        [HttpGet(Name = "GetGames")]
-        public IEnumerable<Game> Get()
+        [HttpGet(nameof(GetGames))]
+        public IEnumerable<Game> GetGames()
         {
             return new List<Game>
             {
@@ -24,15 +28,39 @@ namespace GameServerAPI.Controllers
             }
             .ToArray();
         }
+
+        [HttpGet(nameof(StartSteamCMD))]
+        public IActionResult StartSteamCMD()
+        {
+            _gameService.StartSteamCMD();
+
+            return Ok("StartSteamCMD executed successfully!");
+        }
     }
 
-    public class Game
+    public class GameService
     {
-        public string Name { get; set; }
-
-        public Game(string name)
+        public void StartSteamCMD()
         {
-            Name = name;
+            string steamCmdPath = @"C:\steamcmd\steamcmd.exe";
+
+            // Create a new ProcessStartInfo object and set the necessary properties
+            ProcessStartInfo steamCmdProcessInfo = new ProcessStartInfo(steamCmdPath);
+            steamCmdProcessInfo.UseShellExecute = false; // Set to false to redirect standard output
+            steamCmdProcessInfo.RedirectStandardOutput = true;
+            steamCmdProcessInfo.CreateNoWindow = true; // Set to true to hide the cmd window
+
+            // Start the process
+            Process steamCmdProcess = new Process();
+            steamCmdProcess.StartInfo = steamCmdProcessInfo;
+            steamCmdProcess.Start();
+
+            // Wait for the process to exit and then read the output
+            steamCmdProcess.WaitForExit();
+            string output = steamCmdProcess.StandardOutput.ReadToEnd();
+
+            // Display the output (optional)
+            Console.WriteLine(output);
         }
     }
 }
