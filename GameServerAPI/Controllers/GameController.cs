@@ -1,6 +1,6 @@
 using CommonModels;
+using GameServerAPI.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace GameServerAPI.Controllers
 {
@@ -35,32 +35,6 @@ namespace GameServerAPI.Controllers
             _gameService.StartSteamCMD();
 
             return Ok("StartSteamCMD executed successfully!");
-        }
-    }
-
-    public class GameService
-    {
-        public void StartSteamCMD()
-        {
-            string steamCmdPath = @"C:\steamcmd\steamcmd.exe";
-
-            // Create a new ProcessStartInfo object and set the necessary properties
-            ProcessStartInfo steamCmdProcessInfo = new ProcessStartInfo(steamCmdPath);
-            steamCmdProcessInfo.UseShellExecute = false; // Set to false to redirect standard output
-            steamCmdProcessInfo.RedirectStandardOutput = true;
-            steamCmdProcessInfo.CreateNoWindow = true; // Set to true to hide the cmd window
-
-            // Start the process
-            Process steamCmdProcess = new Process();
-            steamCmdProcess.StartInfo = steamCmdProcessInfo;
-            steamCmdProcess.Start();
-
-            // Wait for the process to exit and then read the output
-            steamCmdProcess.WaitForExit();
-            string output = steamCmdProcess.StandardOutput.ReadToEnd();
-
-            // Display the output (optional)
-            Console.WriteLine(output);
         }
     }
 }
