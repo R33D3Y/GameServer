@@ -14,7 +14,7 @@ namespace GameServerAPI.Controllers
         public GameController(ILogger<GameController> logger)
         {
             _logger = logger;
-            _gameService = new GameService();
+            _gameService = new GameService(@"F:\GameServers");
         }
 
         [HttpGet(nameof(GetGames))]
@@ -24,15 +24,20 @@ namespace GameServerAPI.Controllers
             {
                 new Game("Minecraft"),
                 new Game("7DaysToDie"),
+                new Game("Terraria"),
                 new Game("ConanExiles"),
             }
             .ToArray();
         }
 
         [HttpGet(nameof(StartSteamCMD))]
-        public IActionResult StartSteamCMD()
+        public IActionResult StartSteamCMD(
+            string gameLocation,
+            string gameId,
+            string gameExeLocation)
         {
-            _gameService.StartSteamCMD();
+            _gameService.StartAndUpdateSteamCMD(gameLocation, gameId);
+            _gameService.StartGameServer(gameLocation, gameExeLocation);
 
             return Ok("StartSteamCMD executed successfully!");
         }

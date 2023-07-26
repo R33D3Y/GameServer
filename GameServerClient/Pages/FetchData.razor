@@ -6,13 +6,16 @@
 <MudTable Items="games" TItem="Games">
     <HeaderContent>
         <MudTh>Name</MudTh>
+        <MudTh/>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Name</MudTd>
+        <MudTd>@context.Name</MudTd><MudTd>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => GameServerClick(context))">Start Server</MudButton>
+        </MudTd>
     </RowTemplate>
 </MudTable>
 
-<MudCard>
+@* <MudCard>
     <MudCardContent>
         <h3>Click the button to execute Steam CMD:</h3>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ExecuteMainMethod">Execute Main</MudButton>
@@ -22,57 +25,4 @@
             <p>@message</p>
         }
     </MudCardContent>
-</MudCard>
-
-@code {
-    private Game[] games;
-    private string message;
-    private const string GameConstant = "game";
-
-    protected override async Task OnInitializedAsync()
-    {
-        var response = await HttpClient.GetAsync(Route(GameConstant, "GetGames"));
-        if (response.IsSuccessStatusCode)
-        {
-            var json = await response.Content.ReadAsStringAsync();
-
-            if (json is not null)
-            {
-                games = JsonSerializer.Deserialize<Game[]>(json, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-            }
-        }
-        else
-        {
-            // Handle the error case if the response is not successful
-            // You can display an error message or handle it as per your application's requirements
-        }
-    }
-
-    private async Task ExecuteMainMethod()
-    {
-        HttpResponseMessage response = await HttpClient.GetAsync(Route(GameConstant, "StartSteamCMD"));
-        if (response.IsSuccessStatusCode)
-        {
-            message = await response.Content.ReadAsStringAsync();
-        }
-        else
-        {
-            message = "Failed to execute StartSteamCMD!";
-        }
-    }
-
-    private string Route(string route, string endpoint)
-    {
-        return $"{route}/{endpoint}";
-    }
-
-    public class WeatherForecast
-    {
-        public int TemperatureC { get; set; }
-
-        public string? Summary { get; set; }
-    }
-}
+</MudCard> *@
