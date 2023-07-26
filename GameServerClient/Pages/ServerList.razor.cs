@@ -1,11 +1,10 @@
-﻿using CommonModels;
-using System.Text;
-using System.Text.Json;
-using System.Web;
-
-namespace GameServerClient.Pages
+﻿namespace GameServerClient.Pages
 {
-    public partial class FetchData
+    using CommonModels;
+    using System.Text;
+    using System.Text.Json;
+
+    public partial class ServerList
     {
         private Game[]? games;
         private string? message;

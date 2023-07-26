@@ -1,11 +1,11 @@
-﻿@page "/fetchdata"
+﻿@page "/serverlist"
 @using System.Text.Json;
 @using CommonModels;
 @inject HttpClient HttpClient
 
 <MudTable Items="games" TItem="Games">
     <HeaderContent>
-        <MudTh>Name</MudTh>
+        <MudTh>Game</MudTh>
         <MudTh/>
     </HeaderContent>
     <RowTemplate>
