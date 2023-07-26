@@ -39,6 +39,8 @@
                 case "Terraria":
                     await StartServer(game);
                     break;
+                default:
+                    throw new ArgumentException("Game not found");
             }
         }
 
