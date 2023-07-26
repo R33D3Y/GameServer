@@ -9,10 +9,9 @@
         private const string SteamLoginPrompt = "+login";
         private const string SteamForceInstall = "+force_install_dir";
         private const string SteamAppUpdate = "+app_update";
-        private const string TerrariaLocation = "Terraria";
-        private const string TerrariaId = "105600";
 
-        private string GameServerLocation;
+        private string _gameServerLocation;
+        private string? _gameId;
 
         private Process? _steamCmdProcess;
         private Process? _serverProcess;
@@ -21,11 +20,13 @@
 
         public GameService(string serverLocation)
         {
-            GameServerLocation = serverLocation;
+            _gameServerLocation = serverLocation;
         }
 
-        public void StartAndUpdateSteamCMD(string gameFolderLocation = TerrariaLocation, string gameId = TerrariaId)
+        public void StartAndUpdateSteamCMD(string gameFolderLocation, string gameId)
         {
+            _gameId = gameId;
+
             // Create a new ProcessStartInfo object and set the necessary properties
             ProcessStartInfo steamCmdProcessInfo = new ProcessStartInfo(CMDProcess)
             {
@@ -46,7 +47,7 @@
             _steamCmdProcess.BeginOutputReadLine();
             _steamCmdProcess.BeginErrorReadLine();
 
-            SendCommand(_steamCmdProcess, $"{SteamProcess} {SteamForceInstall} {Path.Combine(GameServerLocation, gameFolderLocation)} {SteamLoginPrompt} {SteamLogin.Username} {SteamAppUpdate} {gameId}");
+            SendCommand(_steamCmdProcess, $"{SteamProcess} {SteamForceInstall} {Path.Combine(_gameServerLocation, gameFolderLocation)} {SteamLoginPrompt} {SteamLogin.Username} {SteamAppUpdate} {gameId}");
 
             _steamCmdInputAllowedEvent.WaitOne();
             _steamCmdProcess.Close();
@@ -55,7 +56,7 @@
         public void StartGameServer(string gameFolderLocation, string gameExeLocation)
         {
             // Create a new ProcessStartInfo object and set the necessary properties
-            ProcessStartInfo serverProcessInfo = new ProcessStartInfo(Path.Combine(GameServerLocation, gameFolderLocation, gameExeLocation))
+            ProcessStartInfo serverProcessInfo = new ProcessStartInfo(Path.Combine(_gameServerLocation, gameFolderLocation, gameExeLocation))
             {
                 UseShellExecute = false, // Set to false to redirect standard input, output, and error
                 RedirectStandardInput = true,
@@ -81,7 +82,7 @@
             {
                 Debug.WriteLine($"STEAMCMD: {e.Data}");
 
-                if (e.Data.Contains($"Success! App '{TerrariaId}' already up to date."))
+                if (e.Data.Contains($"Success! App '{_gameId}' already up to date."))
                 {
                     _steamCmdInputAllowedEvent.Set();
                 }

@@ -10,19 +10,12 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd>@context.Name</MudTd><MudTd>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => GameServerClick(context))">Start Server</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => StartGameServerClick(context))">Start Server</MudButton>
+
+            @if (!string.IsNullOrEmpty(message))
+            {
+                <p>@message</p>
+            }
         </MudTd>
     </RowTemplate>
 </MudTable>
-
-@* <MudCard>
-    <MudCardContent>
-        <h3>Click the button to execute Steam CMD:</h3>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ExecuteMainMethod">Execute Main</MudButton>
-
-        @if (!string.IsNullOrEmpty(message))
-        {
-            <p>@message</p>
-        }
-    </MudCardContent>
-</MudCard> *@

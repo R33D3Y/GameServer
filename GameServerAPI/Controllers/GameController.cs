@@ -22,22 +22,20 @@ namespace GameServerAPI.Controllers
         {
             return new List<Game>
             {
-                new Game("Minecraft"),
-                new Game("7DaysToDie"),
-                new Game("Terraria"),
-                new Game("ConanExiles"),
+                new Game("Minecraft", false, string.Empty, string.Empty, string.Empty),
+                new Game("7DaysToDie", true, string.Empty, string.Empty, string.Empty),
+                new Game("Terraria", true, "Terraria", "TerrariaServer.exe", "105600"),
+                new Game("ConanExiles", true, string.Empty, string.Empty, string.Empty),
             }
             .ToArray();
         }
 
-        [HttpGet(nameof(StartSteamCMD))]
+        [HttpPost(nameof(StartSteamCMD))]
         public IActionResult StartSteamCMD(
-            string gameLocation,
-            string gameId,
-            string gameExeLocation)
+            [FromBody] Game game)
         {
-            _gameService.StartAndUpdateSteamCMD(gameLocation, gameId);
-            _gameService.StartGameServer(gameLocation, gameExeLocation);
+            _gameService.StartAndUpdateSteamCMD(game.GameLocation, game.GameId);
+            //_gameService.StartGameServer(game.GameLocation, game.GameExeLocation);
 
             return Ok("StartSteamCMD executed successfully!");
         }
