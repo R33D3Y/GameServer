@@ -2,7 +2,7 @@
 {
     using System.Diagnostics;
 
-    public class GameService
+    public class GameService : IDisposable
     {
         private const string CMDProcess = "cmd.exe";
         private const string SteamProcess = "steamcmd";
@@ -14,7 +14,7 @@
         private string? _gameId;
 
         private Process? _steamCmdProcess;
-        private Process? _serverProcess;
+        private Process? _gameServerProcess;
 
         private AutoResetEvent _steamCmdInputAllowedEvent = new AutoResetEvent(false);
 
@@ -66,14 +66,14 @@
             };
 
             // Start the process
-            _serverProcess = new Process();
-            _serverProcess.StartInfo = serverProcessInfo;
-            _serverProcess.OutputDataReceived += ServerProcess_OutputDataReceived;
-            _serverProcess.ErrorDataReceived += ServerProcess_ErrorDataReceived;
-            _serverProcess.Start();
-
-            _serverProcess.BeginOutputReadLine();
-            _serverProcess.BeginErrorReadLine();
+            _gameServerProcess = new Process();
+            _gameServerProcess.StartInfo = serverProcessInfo;
+            _gameServerProcess.OutputDataReceived += ServerProcess_OutputDataReceived;
+            _gameServerProcess.ErrorDataReceived += ServerProcess_ErrorDataReceived;
+            _gameServerProcess.Start();
+            
+            _gameServerProcess.BeginOutputReadLine();
+            _gameServerProcess.BeginErrorReadLine();
         }
 
         private void SteamCmdProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
@@ -124,6 +124,21 @@
             {
                 // Handle the case where the process is not running or the command is empty
                 Console.WriteLine("SteamCMD process is not running, or the command is empty.");
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_steamCmdProcess is not null)
+            {
+                _steamCmdProcess.Kill();
+                _steamCmdProcess = null;
+            }
+
+            if (_gameServerProcess is not null)
+            {
+                _gameServerProcess.Kill();
+                _gameServerProcess = null;
             }
         }
     }

@@ -11,10 +11,10 @@ namespace GameServerAPI.Controllers
         private readonly ILogger<GameController> _logger;
         private GameService _gameService;
 
-        public GameController(ILogger<GameController> logger)
+        public GameController(ILogger<GameController> logger, GameService gameService)
         {
             _logger = logger;
-            _gameService = new GameService(@"F:\GameServers");
+            _gameService = gameService;
         }
 
         [HttpGet(nameof(GetGames))]

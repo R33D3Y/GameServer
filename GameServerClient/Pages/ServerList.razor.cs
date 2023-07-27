@@ -62,7 +62,7 @@
             }
         }
 
-        private string Route(string route, string endpoint)
+        private static string Route(string route, string endpoint)
         {
             return $"{route}/{endpoint}";
         }
