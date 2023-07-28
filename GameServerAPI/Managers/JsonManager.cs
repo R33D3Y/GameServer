@@ -15,7 +15,7 @@
                 JObject defaultJson = new()
                 {
                     ["Username"] = "USERNAME",
-                    ["GameFolderLocation"] = "F:\\Backup\\Games"
+                    ["GameFolderLocation"] = "PATHTOSERVERFOLDER"
                 };
 
                 File.WriteAllText(JsonFilePath, defaultJson.ToString());
