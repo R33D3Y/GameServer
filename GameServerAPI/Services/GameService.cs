@@ -1,5 +1,6 @@
 ﻿namespace GameServerAPI.Services
 {
+    using GameServerAPI.Managers;
     using System.Diagnostics;
 
     public class GameService : IDisposable
@@ -47,7 +48,9 @@
             _steamCmdProcess.BeginOutputReadLine();
             _steamCmdProcess.BeginErrorReadLine();
 
-            SendCommand(_steamCmdProcess, $"{SteamProcess} {SteamForceInstall} {Path.Combine(_gameServerLocation, gameFolderLocation)} {SteamLoginPrompt} {SteamLogin.Username} {SteamAppUpdate} {gameId}");
+            Directory.CreateDirectory(Path.Combine(_gameServerLocation, gameFolderLocation));
+
+            SendCommand(_steamCmdProcess, $"{SteamProcess} {SteamForceInstall} {Path.Combine(_gameServerLocation, gameFolderLocation)} {SteamLoginPrompt} {JsonManager.GetPropertyValue("Username")}{SteamAppUpdate} {gameId}");
 
             _steamCmdInputAllowedEvent.WaitOne();
             _steamCmdProcess.Close();
