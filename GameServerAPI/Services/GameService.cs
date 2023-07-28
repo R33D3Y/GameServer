@@ -50,7 +50,7 @@
 
             Directory.CreateDirectory(Path.Combine(_gameServerLocation, gameFolderLocation));
 
-            SendCommand(_steamCmdProcess, $"{SteamProcess} {SteamForceInstall} {Path.Combine(_gameServerLocation, gameFolderLocation)} {SteamLoginPrompt} {JsonManager.GetPropertyValue("Username")}{SteamAppUpdate} {gameId}");
+            SendCommand(_steamCmdProcess, $"{SteamProcess} {SteamForceInstall} {Path.Combine(_gameServerLocation, gameFolderLocation)} {SteamLoginPrompt} {JsonManager.GetPropertyValue("Username")} {SteamAppUpdate} {gameId}");
 
             _steamCmdInputAllowedEvent.WaitOne();
             _steamCmdProcess.Close();
