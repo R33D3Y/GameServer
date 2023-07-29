@@ -19,3 +19,25 @@
         </MudTd>
     </RowTemplate>
 </MudTable>
+
+<MudTimeline TimelineOrientation="TimelineOrientation.Vertical" TimelinePosition="TimelinePosition.Start" class="custom-timeline">
+    @foreach (var message in messages)
+    {
+        if (message.ToLower().Contains("error"))
+        {
+            <MudTimelineItem Color="Color.Error" Variant="Variant.Filled" class="custom-timeline-item">
+                <ItemContent>
+                    <MudAlert Severity="Severity.Error">@message</MudAlert>
+                </ItemContent>
+            </MudTimelineItem>
+        }
+        else
+        {
+            <MudTimelineItem Color="Color.Success" Variant="Variant.Filled" class="custom-timeline-item">
+                <ItemContent>
+                    <MudAlert Severity="Severity.Success">@message</MudAlert>
+                </ItemContent>
+            </MudTimelineItem>
+        }
+    }
+</MudTimeline>

@@ -1,7 +1,28 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.SignalR.Client;
+@inject NavigationManager Navigation
 
 <PageTitle>Index</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Hello, world!</MudText>
-<MudText Class="mb-8">Welcome to your new app, powered by MudBlazor!</MudText>
-<MudAlert Severity="Severity.Normal">You can find documentation and examples on our website here: <MudLink Href="https://mudblazor.com" Typo="Typo.body2" Color="Color.Inherit"><b>www.mudblazor.com</b></MudLink></MudAlert>
+@* <MudForm>
+    <MudItem xs="12" md="6">
+        <MudTextField Label="User" @bind-Value="userInput" />
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudTextField Label="Message" @bind-Value="messageInput" Size="Size.Small" />
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudButton OnClick="Send" Disabled="@(!IsConnected)">Send</MudButton>
+    </MudItem>
+</MudForm>
+
+<hr> *@
+
+@* <ul id="messagesList">
+    @foreach (var message in messages)
+    {
+        <li>@message</li>
+    }
+</ul> *@

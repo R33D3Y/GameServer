@@ -1,6 +1,8 @@
 using CommonModels;
+using CommonModels.Hubs;
 using GameServerAPI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace GameServerAPI.Controllers
 {
@@ -8,6 +10,7 @@ namespace GameServerAPI.Controllers
     [Route("[controller]")]
     public class GameController : ControllerBase
     {
+        private readonly IHubContext<ChatHub> _chatHub;
         private readonly ILogger<GameController> _logger;
         private GameService _gameService;
 

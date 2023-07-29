@@ -1,5 +1,7 @@
+using CommonModels.Hubs;
 using GameServerAPI.Managers;
 using GameServerAPI.Services;
+using Microsoft.AspNetCore.ResponseCompression;
 
 // Setup Json file
 JsonManager.SetupJsonSettings();
@@ -21,14 +23,24 @@ if (gameLocation is null)
 
 builder.Services.AddSingleton(gameLocation);
 builder.Services.AddSingleton<GameService>();
+builder.Services.AddSignalR()
+    .AddHubOptions<ChatHub>(options =>
+    {
+        options.EnableDetailedErrors = true;
+    });
+
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+          new[] { "application/octet-stream" });
+});
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorApp",
         builder =>
         {
-            builder.WithOrigins("http://localhost:5001")
-            .AllowAnyOrigin()
+            builder.AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod();
         });
@@ -50,7 +62,9 @@ app.UseCors("AllowBlazorApp");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseResponseCompression();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chathub");
 
 app.Run();

@@ -1,6 +1,7 @@
 ﻿namespace GameServerClient.Pages
 {
     using CommonModels;
+    using Microsoft.AspNetCore.SignalR.Client;
     using System.Text;
     using System.Text.Json;
 
@@ -29,6 +30,32 @@
             {
                 // Handle the error case if the response is not successful
                 // You can display an error message or handle it as per your application's requirements
+            }
+
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl("https://localhost:6001/chathub")
+                .Build();
+
+            hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+            {
+                var encodedMsg = $"{user}: {message}";
+                messages.Add(encodedMsg);
+                InvokeAsync(StateHasChanged);
+            });
+
+            await hubConnection.StartAsync();
+        }
+
+        private HubConnection? hubConnection;
+        private List<string> messages = new List<string>();
+
+        public bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
+
+        public async ValueTask DisposeAsync()
+        {
+            if (hubConnection is not null)
+            {
+                await hubConnection.DisposeAsync();
             }
         }
 

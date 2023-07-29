@@ -1,6 +1,8 @@
 ﻿namespace GameServerAPI.Services
 {
+    using CommonModels.Hubs;
     using GameServerAPI.Managers;
+    using Microsoft.AspNetCore.SignalR;
     using System.Diagnostics;
 
     public class GameService : IDisposable
@@ -12,6 +14,7 @@
         private const string SteamAppUpdate = "+app_update";
 
         private string _gameServerLocation;
+        private IHubContext<ChatHub> _chatHubContext;
         private string? _gameId;
 
         private Process? _steamCmdProcess;
@@ -19,14 +22,18 @@
 
         private AutoResetEvent _steamCmdInputAllowedEvent = new AutoResetEvent(false);
 
-        public GameService(string serverLocation)
+        public GameService(
+            IHubContext<ChatHub> chatHubContext, string serverLocation)
         {
+            _chatHubContext = chatHubContext;
             _gameServerLocation = serverLocation;
 
             SteamLogin.Username = JsonManager.GetPropertyValue("Username");
         }
 
-        public void StartAndUpdateSteamCMD(string gameFolderLocation, string gameId)
+        public void StartAndUpdateSteamCMD(
+            string gameFolderLocation,
+            string gameId)
         {
             _gameId = gameId;
 
@@ -85,7 +92,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                Debug.WriteLine($"STEAMCMD: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
+                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "STEAMCMD", HideSensitivePhrase(e.Data, SteamLogin.Username));
 
                 if (e.Data.Contains($"Success! App '{_gameId}' already up to date."))
                 {
@@ -98,7 +105,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                Debug.WriteLine($"STEAMCMD ERROR: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
+                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "STEAMCMD ERROR", HideSensitivePhrase(e.Data, SteamLogin.Username));
             }
         }
 
@@ -106,7 +113,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                Debug.WriteLine($"SERVER: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
+                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "SERVER", HideSensitivePhrase(e.Data, SteamLogin.Username));
             }
         }
 
@@ -114,7 +121,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                Debug.WriteLine($"SERVER ERROR: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
+                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "SERVER ERROR", HideSensitivePhrase(e.Data, SteamLogin.Username));
             }
         }
 
@@ -130,7 +137,7 @@
             else
             {
                 // Handle the case where the process is not running or the command is empty
-                Console.WriteLine("SteamCMD process is not running, or the command is empty.");
+                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "STEAMCMD ERROR", "SteamCMD process is not running, or the command is empty.");
             }
         }
 
