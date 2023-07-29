@@ -1,5 +1,6 @@
 ﻿namespace GameServerAPI.Services
 {
+    using CommonModels;
     using CommonModels.Hubs;
     using GameServerAPI.Managers;
     using Microsoft.AspNetCore.SignalR;
@@ -14,6 +15,7 @@
         private const string SteamAppUpdate = "+app_update";
 
         public string GameServerLocation { get; }
+        public string CurrentlyRunningGame { get; set; }
         private readonly IHubContext<MessagingHub> _chatHubContext;
         private string? _gameId;
 
@@ -31,11 +33,9 @@
             SteamLogin.Username = JsonManager.GetPropertyValue("Username");
         }
 
-        public void StartAndUpdateSteamCMD(
-            string gameFolderLocation,
-            string gameId)
+        public void StartAndUpdateSteamCMD(Game game)
         {
-            _gameId = gameId;
+            _gameId = game.GameId;
 
             // Create a new ProcessStartInfo object and set the necessary properties
             ProcessStartInfo steamCmdProcessInfo = new ProcessStartInfo(CMDProcess)
@@ -57,19 +57,19 @@
             _steamCmdProcess.BeginOutputReadLine();
             _steamCmdProcess.BeginErrorReadLine();
 
-            Directory.CreateDirectory(Path.Combine(GameServerLocation, gameFolderLocation));
+            Directory.CreateDirectory(Path.Combine(GameServerLocation, game.GameLocation));
 
-            SendCommand(_steamCmdProcess, $"{SteamProcess} {SteamForceInstall} {Path.Combine(GameServerLocation, gameFolderLocation)} {SteamLoginPrompt} {SteamLogin.Username} {SteamAppUpdate} {gameId}");
+            SendCommand(_steamCmdProcess, $"{SteamProcess} {SteamForceInstall} {Path.Combine(GameServerLocation, game.GameLocation)} {SteamLoginPrompt} {SteamLogin.Username} {SteamAppUpdate} {game.GameId}");
 
             _steamCmdInputAllowedEvent.WaitOne();
             _steamCmdProcess.Close();
             _steamCmdProcess = null;
         }
 
-        public void StartGameServer(string gameFolderLocation, string gameExeLocation)
+        public void StartGameServer(Game game)
         {
             // Create a new ProcessStartInfo object and set the necessary properties
-            ProcessStartInfo serverProcessInfo = new ProcessStartInfo(Path.Combine(GameServerLocation, gameFolderLocation, gameExeLocation))
+            ProcessStartInfo serverProcessInfo = new ProcessStartInfo(Path.Combine(GameServerLocation, game.GameLocation, game.GameExeLocation))
             {
                 UseShellExecute = false, // Set to false to redirect standard input, output, and error
                 RedirectStandardInput = true,

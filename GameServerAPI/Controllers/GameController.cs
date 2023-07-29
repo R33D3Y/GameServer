@@ -25,6 +25,7 @@ namespace GameServerAPI.Controllers
             foreach (var game in Games.AvailableGames)
             {
                 game.IsInstalled = Directory.Exists(Path.Combine(_gameService.GameServerLocation, game.GameLocation));
+                game.IsRunning = _gameService.CurrentlyRunningGame?.Equals(game.Name) ?? false;
 
                 games.Add(game);
             }
@@ -36,19 +37,21 @@ namespace GameServerAPI.Controllers
         public IActionResult InstallServer(
             [FromBody] Game game)
         {
-            _gameService.StartAndUpdateSteamCMD(game.GameLocation, game.GameId);
+            _gameService.StartAndUpdateSteamCMD(game);
 
-            return Ok("StartSteamCMD executed successfully!");
+            return Ok($"Installed {game.Name} successfully!");
         }
 
         [HttpPost(nameof(StartServer))]
         public IActionResult StartServer(
             [FromBody] Game game)
         {
-            _gameService.StartAndUpdateSteamCMD(game.GameLocation, game.GameId);
-            _gameService.StartGameServer(game.GameLocation, game.GameExeLocation);
+            _gameService.CurrentlyRunningGame = game.Name;
 
-            return Ok("StartSteamCMD executed successfully!");
+            _gameService.StartAndUpdateSteamCMD(game);
+            _gameService.StartGameServer(game);
+
+            return Ok($"Started {game.Name} successfully!");
         }
 
         [HttpGet(nameof(StopServer))]
@@ -56,7 +59,7 @@ namespace GameServerAPI.Controllers
         {
             _gameService.StopGameServer();
 
-            return Ok("StartSteamCMD executed successfully!");
+            return Ok($"Stopped game server successfully!");
         }
     }
 }

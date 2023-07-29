@@ -13,24 +13,7 @@
 
         protected override async Task OnInitializedAsync()
         {
-            var response = await HttpClient.GetAsync(Route(GameRoute, "GetGames"));
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-
-                if (json is not null)
-                {
-                    games = JsonSerializer.Deserialize<Game[]?>(json, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-                }
-            }
-            else
-            {
-                // Handle the error case if the response is not successful
-                // You can display an error message or handle it as per your application's requirements
-            }
+            await UpdateGames();
 
             hubConnection = new HubConnectionBuilder()
                 .WithUrl("https://localhost:6001/chathub")
@@ -44,6 +27,23 @@
             });
 
             await hubConnection.StartAsync();
+        }
+
+        private async Task UpdateGames()
+        {
+            var response = await HttpClient.GetAsync(Route(GameRoute, "GetGames"));
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (json is not null)
+                {
+                    games = JsonSerializer.Deserialize<Game[]?>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                }
+            }
         }
 
         private HubConnection? hubConnection;
@@ -88,11 +88,15 @@
             string jsonPayload = JsonSerializer.Serialize(game);
 
             await HttpClient.PostAsync(Route(GameRoute, "InstallServer"), new StringContent(jsonPayload, Encoding.UTF8, "application/json"));
+
+            await UpdateGames();
         }
 
         private async Task StopServerClick()
         {
             await HttpClient.GetAsync(Route(GameRoute, "StopServer"));
+
+            await UpdateGames();
         }
 
         private async Task StartServer(Game game)
@@ -100,6 +104,8 @@
             string jsonPayload = JsonSerializer.Serialize(game);
 
             await HttpClient.PostAsync(Route(GameRoute, "StartServer"), new StringContent(jsonPayload, Encoding.UTF8, "application/json"));
+
+            await UpdateGames();
         }
 
         private static string Route(string route, string endpoint)
