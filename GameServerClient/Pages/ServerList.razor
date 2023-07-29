@@ -6,15 +6,25 @@
 <MudTable Items="games" TItem="Games">
     <HeaderContent>
         <MudTh>Game</MudTh>
-        <MudTh/>
+        <MudTh />
+        <MudTh />
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Name</MudTd><MudTd>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => StartGameServerClick(context))">Start Server</MudButton>
-
-            @if (!string.IsNullOrEmpty(message))
+        <MudTd>@context.Name</MudTd>
+        <MudTd>
+            @if (!context.IsInstalled && context.IsSteam)
             {
-                <p>@message</p>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => InstallGameServerClick(context))">Install Server</MudButton>
+            }
+        </MudTd>
+        <MudTd>
+            @if (context.IsRunning)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => StopServerClick())">Start Server</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => StartGameServerClick(context))">Start Server</MudButton>
             }
         </MudTd>
     </RowTemplate>

@@ -1,8 +1,6 @@
 using CommonModels;
-using CommonModels.Hubs;
 using GameServerAPI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
 namespace GameServerAPI.Controllers
 {
@@ -10,9 +8,8 @@ namespace GameServerAPI.Controllers
     [Route("[controller]")]
     public class GameController : ControllerBase
     {
-        private readonly IHubContext<ChatHub> _chatHub;
         private readonly ILogger<GameController> _logger;
-        private GameService _gameService;
+        private readonly GameService _gameService;
 
         public GameController(ILogger<GameController> logger, GameService gameService)
         {
@@ -23,22 +20,31 @@ namespace GameServerAPI.Controllers
         [HttpGet(nameof(GetGames))]
         public IEnumerable<Game> GetGames()
         {
-            return new List<Game>
-            {
-                new Game("Minecraft", false, string.Empty, string.Empty, string.Empty),
-                new Game("7DaysToDie", true, string.Empty, string.Empty, string.Empty),
-                new Game("Terraria", true, "Terraria", "TerrariaServer.exe", "105600"),
-                new Game("ConanExiles", true, string.Empty, string.Empty, string.Empty),
-            }
-            .ToArray();
+            return Games.AvailableGames.ToArray();
         }
 
-        [HttpPost(nameof(StartSteamCMD))]
-        public IActionResult StartSteamCMD(
+        [HttpPost(nameof(InstallServer))]
+        public IActionResult InstallServer(
             [FromBody] Game game)
         {
             _gameService.StartAndUpdateSteamCMD(game.GameLocation, game.GameId);
-            //_gameService.StartGameServer(game.GameLocation, game.GameExeLocation);
+
+            return Ok("StartSteamCMD executed successfully!");
+        }
+
+        [HttpPost(nameof(StartServer))]
+        public IActionResult StartServer(
+            [FromBody] Game game)
+        {
+            _gameService.StartGameServer(game.GameLocation, game.GameExeLocation);
+
+            return Ok("StartSteamCMD executed successfully!");
+        }
+
+        [HttpGet(nameof(StopServer))]
+        public IActionResult StopServer()
+        {
+            _gameService.StopGameServer();
 
             return Ok("StartSteamCMD executed successfully!");
         }

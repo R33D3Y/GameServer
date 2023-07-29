@@ -13,17 +13,17 @@
         private const string SteamForceInstall = "+force_install_dir";
         private const string SteamAppUpdate = "+app_update";
 
-        private string _gameServerLocation;
-        private IHubContext<ChatHub> _chatHubContext;
+        private readonly string _gameServerLocation;
+        private readonly IHubContext<MessagingHub> _chatHubContext;
         private string? _gameId;
 
         private Process? _steamCmdProcess;
         private Process? _gameServerProcess;
 
-        private AutoResetEvent _steamCmdInputAllowedEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent _steamCmdInputAllowedEvent = new AutoResetEvent(false);
 
         public GameService(
-            IHubContext<ChatHub> chatHubContext, string serverLocation)
+            IHubContext<MessagingHub> chatHubContext, string serverLocation)
         {
             _chatHubContext = chatHubContext;
             _gameServerLocation = serverLocation;
@@ -63,6 +63,8 @@
 
             _steamCmdInputAllowedEvent.WaitOne();
             _steamCmdProcess.Close();
+            _steamCmdProcess.Kill();
+            _steamCmdProcess = null;
         }
 
         public void StartGameServer(string gameFolderLocation, string gameExeLocation)
@@ -86,6 +88,16 @@
             
             _gameServerProcess.BeginOutputReadLine();
             _gameServerProcess.BeginErrorReadLine();
+        }
+
+        public void StopGameServer()
+        {
+            if (_gameServerProcess is not null)
+            {
+                _gameServerProcess.Close();
+                _gameServerProcess.Kill();
+                _gameServerProcess = null;
+            }
         }
 
         private void SteamCmdProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)

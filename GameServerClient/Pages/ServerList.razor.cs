@@ -59,6 +59,18 @@
             }
         }
 
+        private async Task InstallGameServerClick(Game game)
+        {
+            switch (game.Name)
+            {
+                case "Terraria":
+                    await InstallServer(game);
+                    break;
+                default:
+                    throw new ArgumentException("Game not found");
+            }
+        }
+
         private async Task StartGameServerClick(Game game)
         {
             switch (game.Name)
@@ -71,6 +83,38 @@
             }
         }
 
+        private async Task InstallServer(Game game)
+        {
+            // Construct the query string with the required parameters
+            // Serialize the Game object to JSON
+            string jsonPayload = JsonSerializer.Serialize(game);
+
+            // Replace 'HttpClient' with the instance of your HttpClient
+            HttpResponseMessage response = await HttpClient.PostAsync(Route(GameRoute, "InstallServer"), new StringContent(jsonPayload, Encoding.UTF8, "application/json"));
+            if (response.IsSuccessStatusCode)
+            {
+                message = await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                message = "Failed to install server!";
+            }
+        }
+
+        private async Task StopServerClick()
+        {
+            // Replace 'HttpClient' with the instance of your HttpClient
+            HttpResponseMessage response = await HttpClient.GetAsync(Route(GameRoute, "StopServer"));
+            if (response.IsSuccessStatusCode)
+            {
+                message = await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                message = "Failed to install server!";
+            }
+        }
+
         private async Task StartServer(Game game)
         {
             // Construct the query string with the required parameters
@@ -78,7 +122,7 @@
             string jsonPayload = JsonSerializer.Serialize(game);
 
             // Replace 'HttpClient' with the instance of your HttpClient
-            HttpResponseMessage response = await HttpClient.PostAsync(Route(GameRoute, "StartSteamCMD"), new StringContent(jsonPayload, Encoding.UTF8, "application/json"));
+            HttpResponseMessage response = await HttpClient.PostAsync(Route(GameRoute, "StartServer"), new StringContent(jsonPayload, Encoding.UTF8, "application/json"));
             if (response.IsSuccessStatusCode)
             {
                 message = await response.Content.ReadAsStringAsync();

@@ -24,7 +24,7 @@ if (gameLocation is null)
 builder.Services.AddSingleton(gameLocation);
 builder.Services.AddSingleton<GameService>();
 builder.Services.AddSignalR()
-    .AddHubOptions<ChatHub>(options =>
+    .AddHubOptions<MessagingHub>(options =>
     {
         options.EnableDetailedErrors = true;
     });
@@ -65,6 +65,6 @@ app.UseAuthorization();
 app.UseResponseCompression();
 
 app.MapControllers();
-app.MapHub<ChatHub>("/chathub");
+app.MapHub<MessagingHub>("/chathub");
 
 app.Run();

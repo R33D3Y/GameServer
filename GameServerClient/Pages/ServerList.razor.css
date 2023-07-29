@@ -1,5 +1,4 @@
-﻿<style >
-/* Custom CSS to adjust the spacing between timeline items */
+﻿/* Custom CSS to adjust the spacing between timeline items */
 .custom-timeline {
     /* Adjust the desired space between timeline items by changing the margin or padding values */
     margin-top: 0px; /* Example: 10px spacing between items */
@@ -21,5 +20,3 @@
     /* If you need to adjust the space between individual items, you can use the margin or padding values here */
     margin-bottom: 0px; /* Example: 5px spacing between individual items */
 }
-
-</style >

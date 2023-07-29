@@ -2,7 +2,7 @@
 
 namespace CommonModels.Hubs
 {
-    public class ChatHub : Hub
+    public class MessagingHub : Hub
     {
         public async Task SendMessage(string user, string message)
         {
