@@ -41,3 +41,28 @@
         }
     }
 </MudTimeline>
+
+<style>
+    /* Custom CSS to adjust the spacing between timeline items */
+    .custom-timeline {
+        /* Adjust the desired space between timeline items by changing the margin or padding values */
+        margin-top: 0px; /* Example: 10px spacing between items */
+    }
+
+    .mud-alert {
+        display: flex;
+        padding: 0px 0px;
+        border-radius: var(--mud-default-borderradius);
+        background-color: transparent;
+        transition: box-shadow 300ms cubic-bezier(.4,0,.2,1) 0ms;
+    }
+
+    .mud-timeline-vertical .mud-timeline-item {
+        padding-bottom: 0px;
+    }
+
+    .custom-timeline-item {
+        /* If you need to adjust the space between individual items, you can use the margin or padding values here */
+        margin-bottom: 0px; /* Example: 5px spacing between individual items */
+    }
+</style>
