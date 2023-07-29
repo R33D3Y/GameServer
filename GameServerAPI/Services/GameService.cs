@@ -63,7 +63,6 @@
 
             _steamCmdInputAllowedEvent.WaitOne();
             _steamCmdProcess.Close();
-            _steamCmdProcess.Kill();
             _steamCmdProcess = null;
         }
 
@@ -95,7 +94,6 @@
             if (_gameServerProcess is not null)
             {
                 _gameServerProcess.Close();
-                _gameServerProcess.Kill();
                 _gameServerProcess = null;
             }
         }
@@ -157,13 +155,13 @@
         {
             if (_steamCmdProcess is not null)
             {
-                _steamCmdProcess.Kill();
+                _steamCmdProcess.Close();
                 _steamCmdProcess = null;
             }
 
             if (_gameServerProcess is not null)
             {
-                _gameServerProcess.Kill();
+                _gameServerProcess.Close();
                 _gameServerProcess = null;
             }
         }

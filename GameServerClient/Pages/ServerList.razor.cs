@@ -2,6 +2,7 @@
 {
     using CommonModels;
     using Microsoft.AspNetCore.SignalR.Client;
+    using Microsoft.JSInterop;
     using System.Text;
     using System.Text.Json;
 
@@ -35,11 +36,11 @@
                 .WithUrl("https://localhost:6001/chathub")
                 .Build();
 
-            hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+            hubConnection.On<string, string>("ReceiveMessage", async (user, message) =>
             {
                 var encodedMsg = $"{user}: {message}";
-                messages.Add(encodedMsg);
-                InvokeAsync(StateHasChanged);
+                await AddTimelineItem(encodedMsg);
+                await InvokeAsync(StateHasChanged);
             });
 
             await hubConnection.StartAsync();
@@ -104,6 +105,16 @@
         private static string Route(string route, string endpoint)
         {
             return $"{route}/{endpoint}";
+        }
+
+        private async Task AddTimelineItem(string message)
+        {
+            // Add the new item to the 'messages' collection (assuming 'messages' is your list of timeline items)
+            messages.Add(message);
+            StateHasChanged(); // Notify Blazor to re-render the component with the new item
+
+            // Scroll to the bottom after the new item is added and the component is re-rendered
+            await JSRuntime.InvokeVoidAsync("scrollToBottom");
         }
     }
 }

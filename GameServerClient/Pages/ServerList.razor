@@ -30,27 +30,39 @@
     </RowTemplate>
 </MudTable>
 
-<MudTimeline TimelineOrientation="TimelineOrientation.Vertical" TimelinePosition="TimelinePosition.Start" class="custom-timeline">
-    @foreach (var message in messages)
-    {
-        if (message.ToLower().Contains("error"))
+@inject IJSRuntime JSRuntime
+
+<div id="timelineContainer" style="height: 400px; overflow: auto;">
+    <MudTimeline TimelineOrientation="TimelineOrientation.Vertical" TimelinePosition="TimelinePosition.Start" class="custom-timeline">
+        @foreach (var message in messages)
         {
-            <MudTimelineItem Color="Color.Error" Variant="Variant.Filled" class="custom-timeline-item">
-                <ItemContent>
-                    <MudAlert Severity="Severity.Error">@message</MudAlert>
-                </ItemContent>
-            </MudTimelineItem>
+            if (message.ToLower().Contains("error"))
+            {
+                <MudTimelineItem Color="Color.Error" Variant="Variant.Filled" class="custom-timeline-item">
+                    <ItemContent>
+                        <MudAlert Severity="Severity.Error">@message</MudAlert>
+                    </ItemContent>
+                </MudTimelineItem>
+            }
+            else
+            {
+                <MudTimelineItem Color="Color.Success" Variant="Variant.Filled" class="custom-timeline-item">
+                    <ItemContent>
+                        <MudAlert Severity="Severity.Success">@message</MudAlert>
+                    </ItemContent>
+                </MudTimelineItem>
+            }
         }
-        else
-        {
-            <MudTimelineItem Color="Color.Success" Variant="Variant.Filled" class="custom-timeline-item">
-                <ItemContent>
-                    <MudAlert Severity="Severity.Success">@message</MudAlert>
-                </ItemContent>
-            </MudTimelineItem>
-        }
+    </MudTimeline>
+</div>
+
+
+<script>
+    function scrollToBottom() {
+        const container = document.getElementById('timelineContainer');
+        container.scrollTop = container.scrollHeight;
     }
-</MudTimeline>
+</script>
 
 <style>
     /* Custom CSS to adjust the spacing between timeline items */

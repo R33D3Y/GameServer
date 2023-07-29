@@ -14,6 +14,8 @@
 
         public string GameExeLocation { get; set; }
 
-        public string GameId { get; set; }
+        public string? GameId { get; set; }
+
+        public string? ServerArguments { get; set; }
     }
 }
