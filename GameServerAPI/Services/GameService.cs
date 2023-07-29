@@ -22,6 +22,8 @@
         public GameService(string serverLocation)
         {
             _gameServerLocation = serverLocation;
+
+            SteamLogin.Username = JsonManager.GetPropertyValue("Username");
         }
 
         public void StartAndUpdateSteamCMD(string gameFolderLocation, string gameId)
@@ -50,7 +52,7 @@
 
             Directory.CreateDirectory(Path.Combine(_gameServerLocation, gameFolderLocation));
 
-            SendCommand(_steamCmdProcess, $"{SteamProcess} {SteamForceInstall} {Path.Combine(_gameServerLocation, gameFolderLocation)} {SteamLoginPrompt} {JsonManager.GetPropertyValue("Username")} {SteamAppUpdate} {gameId}");
+            SendCommand(_steamCmdProcess, $"{SteamProcess} {SteamForceInstall} {Path.Combine(_gameServerLocation, gameFolderLocation)} {SteamLoginPrompt} {SteamLogin.Username} {SteamAppUpdate} {gameId}");
 
             _steamCmdInputAllowedEvent.WaitOne();
             _steamCmdProcess.Close();
@@ -83,7 +85,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                Debug.WriteLine($"STEAMCMD: {e.Data}");
+                Debug.WriteLine($"STEAMCMD: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
 
                 if (e.Data.Contains($"Success! App '{_gameId}' already up to date."))
                 {
@@ -96,7 +98,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                Debug.WriteLine($"STEAMCMD ERROR: {e.Data}");
+                Debug.WriteLine($"STEAMCMD ERROR: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
             }
         }
 
@@ -104,7 +106,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                Debug.WriteLine($"SERVER: {e.Data}");
+                Debug.WriteLine($"SERVER: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
             }
         }
 
@@ -112,9 +114,11 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                Debug.WriteLine($"SERVER ERROR: {e.Data}");
+                Debug.WriteLine($"SERVER ERROR: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
             }
         }
+
+        private static string HideSensitivePhrase(string input, string sensitivePhrase) => input.Replace(sensitivePhrase, "*****");
 
         public void SendCommand(Process process, string command)
         {

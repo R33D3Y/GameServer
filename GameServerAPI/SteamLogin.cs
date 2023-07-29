@@ -2,6 +2,6 @@
 {
     public static class SteamLogin
     {
-        public static string Username = "USERNAME";
+        public static string? Username { get; set; }
     }
 }
