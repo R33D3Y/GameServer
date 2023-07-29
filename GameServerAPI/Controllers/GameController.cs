@@ -20,7 +20,16 @@ namespace GameServerAPI.Controllers
         [HttpGet(nameof(GetGames))]
         public IEnumerable<Game> GetGames()
         {
-            return Games.AvailableGames.ToArray();
+            var games = new List<Game>();
+
+            foreach (var game in Games.AvailableGames)
+            {
+                game.IsInstalled = Directory.Exists(Path.Combine(_gameService.GameServerLocation, game.GameLocation));
+
+                games.Add(game);
+            }
+
+            return games;
         }
 
         [HttpPost(nameof(InstallServer))]
@@ -36,6 +45,7 @@ namespace GameServerAPI.Controllers
         public IActionResult StartServer(
             [FromBody] Game game)
         {
+            _gameService.StartAndUpdateSteamCMD(game.GameLocation, game.GameId);
             _gameService.StartGameServer(game.GameLocation, game.GameExeLocation);
 
             return Ok("StartSteamCMD executed successfully!");

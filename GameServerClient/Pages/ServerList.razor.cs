@@ -8,7 +8,6 @@
     public partial class ServerList
     {
         private Game[]? games;
-        private string? message;
         private const string GameRoute = "game";
 
         protected override async Task OnInitializedAsync()
@@ -47,7 +46,7 @@
         }
 
         private HubConnection? hubConnection;
-        private List<string> messages = new List<string>();
+        private readonly List<string> messages = new List<string>();
 
         public bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
 
@@ -85,52 +84,21 @@
 
         private async Task InstallServer(Game game)
         {
-            // Construct the query string with the required parameters
-            // Serialize the Game object to JSON
             string jsonPayload = JsonSerializer.Serialize(game);
 
-            // Replace 'HttpClient' with the instance of your HttpClient
-            HttpResponseMessage response = await HttpClient.PostAsync(Route(GameRoute, "InstallServer"), new StringContent(jsonPayload, Encoding.UTF8, "application/json"));
-            if (response.IsSuccessStatusCode)
-            {
-                message = await response.Content.ReadAsStringAsync();
-            }
-            else
-            {
-                message = "Failed to install server!";
-            }
+            await HttpClient.PostAsync(Route(GameRoute, "InstallServer"), new StringContent(jsonPayload, Encoding.UTF8, "application/json"));
         }
 
         private async Task StopServerClick()
         {
-            // Replace 'HttpClient' with the instance of your HttpClient
-            HttpResponseMessage response = await HttpClient.GetAsync(Route(GameRoute, "StopServer"));
-            if (response.IsSuccessStatusCode)
-            {
-                message = await response.Content.ReadAsStringAsync();
-            }
-            else
-            {
-                message = "Failed to install server!";
-            }
+            await HttpClient.GetAsync(Route(GameRoute, "StopServer"));
         }
 
         private async Task StartServer(Game game)
         {
-            // Construct the query string with the required parameters
-            // Serialize the Game object to JSON
             string jsonPayload = JsonSerializer.Serialize(game);
 
-            // Replace 'HttpClient' with the instance of your HttpClient
-            HttpResponseMessage response = await HttpClient.PostAsync(Route(GameRoute, "StartServer"), new StringContent(jsonPayload, Encoding.UTF8, "application/json"));
-            if (response.IsSuccessStatusCode)
-            {
-                message = await response.Content.ReadAsStringAsync();
-            }
-            else
-            {
-                message = "Failed to execute StartSteamCMD!";
-            }
+            await HttpClient.PostAsync(Route(GameRoute, "StartServer"), new StringContent(jsonPayload, Encoding.UTF8, "application/json"));
         }
 
         private static string Route(string route, string endpoint)

@@ -13,7 +13,7 @@
         private const string SteamForceInstall = "+force_install_dir";
         private const string SteamAppUpdate = "+app_update";
 
-        private readonly string _gameServerLocation;
+        public string GameServerLocation { get; }
         private readonly IHubContext<MessagingHub> _chatHubContext;
         private string? _gameId;
 
@@ -26,7 +26,7 @@
             IHubContext<MessagingHub> chatHubContext, string serverLocation)
         {
             _chatHubContext = chatHubContext;
-            _gameServerLocation = serverLocation;
+            GameServerLocation = serverLocation;
 
             SteamLogin.Username = JsonManager.GetPropertyValue("Username");
         }
@@ -57,9 +57,9 @@
             _steamCmdProcess.BeginOutputReadLine();
             _steamCmdProcess.BeginErrorReadLine();
 
-            Directory.CreateDirectory(Path.Combine(_gameServerLocation, gameFolderLocation));
+            Directory.CreateDirectory(Path.Combine(GameServerLocation, gameFolderLocation));
 
-            SendCommand(_steamCmdProcess, $"{SteamProcess} {SteamForceInstall} {Path.Combine(_gameServerLocation, gameFolderLocation)} {SteamLoginPrompt} {SteamLogin.Username} {SteamAppUpdate} {gameId}");
+            SendCommand(_steamCmdProcess, $"{SteamProcess} {SteamForceInstall} {Path.Combine(GameServerLocation, gameFolderLocation)} {SteamLoginPrompt} {SteamLogin.Username} {SteamAppUpdate} {gameId}");
 
             _steamCmdInputAllowedEvent.WaitOne();
             _steamCmdProcess.Close();
@@ -70,7 +70,7 @@
         public void StartGameServer(string gameFolderLocation, string gameExeLocation)
         {
             // Create a new ProcessStartInfo object and set the necessary properties
-            ProcessStartInfo serverProcessInfo = new ProcessStartInfo(Path.Combine(_gameServerLocation, gameFolderLocation, gameExeLocation))
+            ProcessStartInfo serverProcessInfo = new ProcessStartInfo(Path.Combine(GameServerLocation, gameFolderLocation, gameExeLocation))
             {
                 UseShellExecute = false, // Set to false to redirect standard input, output, and error
                 RedirectStandardInput = true,
