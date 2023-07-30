@@ -15,7 +15,7 @@
         private const string SteamAppUpdate = "+app_update";
 
         public string GameServerLocation { get; }
-        public string CurrentlyRunningGame { get; set; }
+        public string? CurrentlyRunningGame { get; set; }
         private readonly IHubContext<MessagingHub> _chatHubContext;
         private string? _gameId;
 
@@ -135,7 +135,15 @@
             }
         }
 
-        private static string HideSensitivePhrase(string input, string sensitivePhrase) => input.Replace(sensitivePhrase, "*****");
+        private static string HideSensitivePhrase(string input, string? sensitivePhrase)
+        {
+            if (sensitivePhrase is null)
+            {
+                return input;
+            }
+
+            return input.Replace(sensitivePhrase, "*****");
+        }
 
         public void SendCommand(Process process, string command)
         {

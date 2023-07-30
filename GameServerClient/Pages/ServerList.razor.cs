@@ -66,6 +66,9 @@
                 case "Terraria":
                     await InstallServer(game);
                     break;
+                case "7 Days To Die":
+                    await InstallServer(game);
+                    break;
                 default:
                     throw new ArgumentException("Game not found");
             }
