@@ -88,28 +88,17 @@
 
         private async Task InstallGameServerClick(Game game)
         {
-            switch (game.Name)
+            if (game.IsSteam)
             {
-                case "Terraria":
-                    await InstallServer(game);
-                    break;
-                case "7 Days To Die":
-                    await InstallServer(game);
-                    break;
-                default:
-                    throw new ArgumentException("Game not found");
+                await InstallServer(game);
             }
         }
 
         private async Task StartGameServerClick(Game game)
         {
-            switch (game.Name)
+            if (game.IsInstalled)
             {
-                case "Terraria":
-                    await StartServer(game);
-                    break;
-                default:
-                    throw new ArgumentException("Game not found");
+                await StartServer(game);
             }
         }
 
