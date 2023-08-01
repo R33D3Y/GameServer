@@ -102,7 +102,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "STEAMCMD", HideSensitivePhrase(e.Data, SteamLogin.Username));
+                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", $"STEAMCMD: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
 
                 if (e.Data.Contains($"Success! App '{_gameId}' already up to date."))
                 {
@@ -115,7 +115,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "STEAMCMD ERROR", HideSensitivePhrase(e.Data, SteamLogin.Username));
+                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", $"STEAMCMD ERROR: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
             }
         }
 
@@ -123,7 +123,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "SERVER", HideSensitivePhrase(e.Data, SteamLogin.Username));
+                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", $"SERVER: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
             }
         }
 
@@ -131,7 +131,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "SERVER ERROR", HideSensitivePhrase(e.Data, SteamLogin.Username));
+                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", $"SERVER ERROR: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
             }
         }
 

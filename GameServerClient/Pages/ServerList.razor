@@ -56,6 +56,16 @@
     </MudTimeline>
 </div>
 
+<MudForm>
+    <MudItem xs="12" md="6">
+        <MudTextField Label="Command" @bind-Value="commandInput" OnKeyPress="HandleKeyPress" />
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudButton OnClick="SendCommandClick">Send</MudButton>
+    </MudItem>
+</MudForm>
+
 <script>
     function scrollToBottom() {
         const container = document.getElementById('timelineContainer');

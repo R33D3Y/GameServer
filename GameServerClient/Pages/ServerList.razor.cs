@@ -1,6 +1,7 @@
 ﻿namespace GameServerClient.Pages
 {
     using CommonModels;
+    using Microsoft.AspNetCore.Components.Web;
     using Microsoft.AspNetCore.SignalR.Client;
     using Microsoft.JSInterop;
     using System.Text;
@@ -10,6 +11,8 @@
     {
         private Game[]? games;
         private const string GameRoute = "game";
+        private string? commandInput;
+        private HubConnection? hubConnection;
 
         protected override async Task OnInitializedAsync()
         {
@@ -46,7 +49,6 @@
             }
         }
 
-        private HubConnection? hubConnection;
         private readonly List<string> messages = new List<string>();
 
         public bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
@@ -56,6 +58,31 @@
             if (hubConnection is not null)
             {
                 await hubConnection.DisposeAsync();
+            }
+        }
+
+        private async Task SendCommandClick()
+        {
+            if (hubConnection is not null)
+            {
+                await SendCommand();
+            }
+        }
+
+        private async Task HandleKeyPress(KeyboardEventArgs e)
+        {
+            if (e.Key == "Enter")
+            {
+                await SendCommand();
+            }
+        }
+
+        private async Task SendCommand()
+        {
+            if (hubConnection is not null && !string.IsNullOrEmpty(commandInput))
+            {
+                commandInput = "SEND IT";
+                await hubConnection.SendAsync("SendMessage", commandInput);
             }
         }
 

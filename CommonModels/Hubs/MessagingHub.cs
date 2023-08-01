@@ -4,9 +4,9 @@ namespace CommonModels.Hubs
 {
     public class MessagingHub : Hub
     {
-        public async Task SendMessage(string user, string message)
+        public async Task SendMessage(string content)
         {
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
+            await Clients.All.SendAsync("ReceiveMessage", content);
         }
     }
 }
