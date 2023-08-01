@@ -1,9 +1,10 @@
-﻿namespace GameServerAPI.Services
+﻿namespace CommonModels.Services
 {
     using CommonModels;
     using CommonModels.Hubs;
-    using GameServerAPI.Managers;
+    using CommonModels.Managers;
     using Microsoft.AspNetCore.SignalR;
+    using System;
     using System.Diagnostics;
 
     public class GameService : IDisposable
@@ -84,7 +85,7 @@
             _gameServerProcess.OutputDataReceived += ServerProcess_OutputDataReceived;
             _gameServerProcess.ErrorDataReceived += ServerProcess_ErrorDataReceived;
             _gameServerProcess.Start();
-            
+
             _gameServerProcess.BeginOutputReadLine();
             _gameServerProcess.BeginErrorReadLine();
         }
@@ -102,7 +103,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", $"STEAMCMD: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
+                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "STEAMCMD", HideSensitivePhrase(e.Data, SteamLogin.Username));
 
                 if (e.Data.Contains($"Success! App '{_gameId}' already up to date."))
                 {
@@ -115,7 +116,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", $"STEAMCMD ERROR: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
+                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "STEAMCMD ERROR", HideSensitivePhrase(e.Data, SteamLogin.Username));
             }
         }
 
@@ -123,7 +124,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", $"SERVER: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
+                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "SERVER", HideSensitivePhrase(e.Data, SteamLogin.Username));
             }
         }
 
@@ -131,7 +132,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", $"SERVER ERROR: {HideSensitivePhrase(e.Data, SteamLogin.Username)}");
+                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "SERVER ERROR", HideSensitivePhrase(e.Data, SteamLogin.Username));
             }
         }
 
@@ -143,6 +144,22 @@
             }
 
             return input.Replace(sensitivePhrase, "*****");
+        }
+
+        public async Task SendInputToGameServer(string command)
+        {
+            await _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "USER COMMAND", command);
+
+            if (_gameServerProcess is not null && !string.IsNullOrEmpty(command))
+            {
+                // Send the command to the standard input of the process
+                await _gameServerProcess.StandardInput.WriteLineAsync(command);
+            }
+            else
+            {
+                // Handle the case where the process is not running or the command is empty
+                await _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "SERVER ERROR", "Server process is not running, or the command is empty.");
+            }
         }
 
         public void SendCommand(Process process, string command)
@@ -161,17 +178,8 @@
 
         public void Dispose()
         {
-            if (_steamCmdProcess is not null)
-            {
-                _steamCmdProcess.Close();
-                _steamCmdProcess = null;
-            }
-
-            if (_gameServerProcess is not null)
-            {
-                _gameServerProcess.Close();
-                _gameServerProcess = null;
-            }
+            _steamCmdProcess?.Kill();
+            _gameServerProcess?.Kill();
         }
     }
 }

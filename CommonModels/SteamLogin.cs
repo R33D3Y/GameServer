@@ -1,4 +1,4 @@
-﻿namespace GameServerAPI
+﻿namespace CommonModels
 {
     public static class SteamLogin
     {

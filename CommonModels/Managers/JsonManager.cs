@@ -1,4 +1,4 @@
-﻿namespace GameServerAPI.Managers
+﻿namespace CommonModels.Managers
 {
     using System.IO;
     using Newtonsoft.Json.Linq;

@@ -32,6 +32,14 @@
             await hubConnection.StartAsync();
         }
 
+        private async Task SendCommand()
+        {
+            if (hubConnection is not null && !string.IsNullOrEmpty(commandInput))
+            {
+                await hubConnection.SendAsync("SendToServer", commandInput, string.Empty);
+            }
+        }
+
         private async Task UpdateGames()
         {
             var response = await HttpClient.GetAsync(Route(GameRoute, "GetGames"));
@@ -74,15 +82,6 @@
             if (e.Key == "Enter")
             {
                 await SendCommand();
-            }
-        }
-
-        private async Task SendCommand()
-        {
-            if (hubConnection is not null && !string.IsNullOrEmpty(commandInput))
-            {
-                commandInput = "SEND IT";
-                await hubConnection.SendAsync("SendMessage", commandInput);
             }
         }
 

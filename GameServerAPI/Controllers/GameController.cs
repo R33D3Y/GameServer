@@ -1,5 +1,5 @@
 using CommonModels;
-using GameServerAPI.Services;
+using CommonModels.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameServerAPI.Controllers

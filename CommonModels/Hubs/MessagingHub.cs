@@ -1,12 +1,25 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using CommonModels.Services;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CommonModels.Hubs
 {
     public class MessagingHub : Hub
     {
-        public async Task SendMessage(string content)
+        private readonly GameService _gameService;
+
+        public MessagingHub(GameService gameService)
         {
-            await Clients.All.SendAsync("ReceiveMessage", content);
+            _gameService = gameService;
+        }
+
+        public async Task SendToClient(string content, string message)
+        {
+            await Clients.All.SendAsync("ReceiveMessage", content, message);
+        }
+
+        public async Task SendToServer(string command, string extra)
+        {
+            await _gameService.SendInputToGameServer(command);
         }
     }
 }

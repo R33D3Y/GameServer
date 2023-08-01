@@ -1,6 +1,6 @@
 using CommonModels.Hubs;
-using GameServerAPI.Managers;
-using GameServerAPI.Services;
+using CommonModels.Managers;
+using CommonModels.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 
 // Setup Json file
