@@ -20,7 +20,7 @@
         <MudTd>
             @if (context.IsRunning)
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => StopServerClick())">Start Server</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => StopServerClick())">Stop Server</MudButton>
             }
             else
             {
@@ -58,7 +58,7 @@
 
 <MudForm>
     <MudItem xs="12" md="6">
-        <MudTextField Label="Command" @bind-Value="commandInput" OnKeyPress="HandleKeyPress" />
+        <MudTextField Label="Command" @bind-Value="commandInput" OnKeyPress="HandleKeyPress"/>
     </MudItem>
 
     <MudItem xs="12">

@@ -34,12 +34,15 @@
 
         private async Task SendCommand()
         {
-            if (hubConnection is not null && !string.IsNullOrEmpty(commandInput))
+            if (!string.IsNullOrEmpty(commandInput))
             {
-                await hubConnection.SendAsync("SendToServer", commandInput, string.Empty);
+                var jsonContent = new StringContent($"\"{commandInput}\"", Encoding.UTF8, "application/json");
+                await HttpClient.PostAsync(Route(GameRoute, "SendInputCommand"), jsonContent);
+
+                commandInput = null;
             }
         }
-
+         
         private async Task UpdateGames()
         {
             var response = await HttpClient.GetAsync(Route(GameRoute, "GetGames"));
@@ -71,10 +74,7 @@
 
         private async Task SendCommandClick()
         {
-            if (hubConnection is not null)
-            {
-                await SendCommand();
-            }
+            await SendCommand();
         }
 
         private async Task HandleKeyPress(KeyboardEventArgs e)

@@ -90,6 +90,22 @@
             _gameServerProcess.BeginErrorReadLine();
         }
 
+        public async Task SendInputToGameServer(string command)
+        {
+            await _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "USER COMMAND", command);
+
+            if (_gameServerProcess is not null && !string.IsNullOrEmpty(command))
+            {
+                // Send the command to the standard input of the process
+                await _gameServerProcess.StandardInput.WriteLineAsync(command + Environment.NewLine);
+            }
+            else
+            {
+                // Handle the case where the process is not running or the command is empty
+                await _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "SERVER ERROR", "Server process is not running, or the command is empty.");
+            }
+        }
+
         public void StopGameServer()
         {
             if (_gameServerProcess is not null)
@@ -144,22 +160,6 @@
             }
 
             return input.Replace(sensitivePhrase, "*****");
-        }
-
-        public async Task SendInputToGameServer(string command)
-        {
-            await _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "USER COMMAND", command);
-
-            if (_gameServerProcess is not null && !string.IsNullOrEmpty(command))
-            {
-                // Send the command to the standard input of the process
-                await _gameServerProcess.StandardInput.WriteLineAsync(command);
-            }
-            else
-            {
-                // Handle the case where the process is not running or the command is empty
-                await _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "SERVER ERROR", "Server process is not running, or the command is empty.");
-            }
         }
 
         public void SendCommand(Process process, string command)

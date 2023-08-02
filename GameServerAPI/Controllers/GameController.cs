@@ -54,9 +54,22 @@ namespace GameServerAPI.Controllers
             return Ok($"Started {game.Name} successfully!");
         }
 
+        [HttpPost(nameof(SendInputCommand))]
+        public async Task<IActionResult> SendInputCommand(
+            [FromBody] string inputCommand)
+        {
+            if (!string.IsNullOrEmpty(inputCommand))
+            {
+                await _gameService.SendInputToGameServer(inputCommand);
+            }
+
+            return Ok($"Sent command '{inputCommand}' successfully!");
+        }
+
         [HttpGet(nameof(StopServer))]
         public IActionResult StopServer()
         {
+            _gameService.CurrentlyRunningGame = null;
             _gameService.StopGameServer();
 
             return Ok($"Stopped game server successfully!");
