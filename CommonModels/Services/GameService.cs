@@ -76,8 +76,18 @@
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
+                WorkingDirectory = Path.Combine(GameServerLocation, game.GameLocation),
                 CreateNoWindow = true // Set to true to hide the cmd window
             };
+
+            string arguments = string.Empty;
+
+            foreach (string argument in game.ServerConfiguration)
+            {
+                arguments += argument + " ";
+            }
+
+            serverProcessInfo.Arguments = arguments;
 
             // Start the process
             _gameServerProcess = new Process();

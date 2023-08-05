@@ -27,7 +27,14 @@ namespace GameServerAPI
                 IsSteam = true,
                 GameLocation = "Terraria",
                 GameExeLocation = "TerrariaServer.exe",
-                GameId = "105600"
+                GameId = "105600",
+                ServerConfiguration = new List<string>
+                {
+                    "-config \"serverconfig.txt\"",
+                    //"-autocreate 1",
+                    //"-worldname SomeWorldNameBlah" + DateTime.Now.Millisecond,
+                    //"-motd I hope this works",
+                }
             },
             new Game
             {

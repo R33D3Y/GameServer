@@ -16,6 +16,6 @@
 
         public string? GameId { get; set; }
 
-        public string? ServerArguments { get; set; }
+        public List<string> ServerConfiguration { get; set; }
     }
 }
