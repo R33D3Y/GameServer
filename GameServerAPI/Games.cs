@@ -31,9 +31,6 @@ namespace GameServerAPI
                 ServerConfiguration = new List<string>
                 {
                     "-config \"serverconfig.txt\"",
-                    //"-autocreate 1",
-                    //"-worldname SomeWorldNameBlah" + DateTime.Now.Millisecond,
-                    //"-motd I hope this works",
                 }
             },
             new Game
