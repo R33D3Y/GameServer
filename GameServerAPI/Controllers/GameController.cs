@@ -66,11 +66,12 @@ namespace GameServerAPI.Controllers
             return Ok($"Sent command '{inputCommand}' successfully!");
         }
 
-        [HttpGet(nameof(StopServer))]
-        public IActionResult StopServer()
+        [HttpPost(nameof(StopServer))]
+        public IActionResult StopServer(
+            [FromBody] Game game)
         {
             _gameService.CurrentlyRunningGame = null;
-            _gameService.StopGameServer();
+            _gameService.StopGameServer(game);
 
             return Ok($"Stopped game server successfully!");
         }

@@ -4,6 +4,7 @@
     using Microsoft.AspNetCore.Components.Web;
     using Microsoft.AspNetCore.SignalR.Client;
     using Microsoft.JSInterop;
+    using System.Collections.Concurrent;
     using System.Text;
     using System.Text.Json;
 
@@ -25,11 +26,47 @@
             hubConnection.On<string, string>("ReceiveMessage", async (user, message) =>
             {
                 var encodedMsg = $"{user}: {message}";
-                await AddTimelineItem(encodedMsg);
-                await InvokeAsync(StateHasChanged);
+
+                // Buffer the message
+                messageBuffer.Enqueue(encodedMsg);
+
+                // Start the flushing process if not already started
+                if (!isFlushingBuffer)
+                {
+                    isFlushingBuffer = true;
+                    await FlushBuffer();
+                }
             });
 
             await hubConnection.StartAsync();
+        }
+
+        private ConcurrentQueue<string> messageBuffer = new ConcurrentQueue<string>();
+        private SemaphoreSlim bufferLock = new SemaphoreSlim(1);
+        private bool isFlushingBuffer = false;
+
+        private async Task FlushBuffer()
+        {
+            while (messageBuffer.TryDequeue(out var bufferedMessage))
+            {
+                await bufferLock.WaitAsync();
+
+                try
+                {
+                    // Simulate UI update with the buffered message
+                    await AddTimelineItem(bufferedMessage);
+                    await InvokeAsync(StateHasChanged);
+
+                    // Introduce a delay to control the rate of updates
+                    await Task.Delay(50); // Adjust the delay time as needed
+                }
+                finally
+                {
+                    bufferLock.Release();
+                }
+            }
+
+            isFlushingBuffer = false;
         }
 
         private async Task SendCommand()
@@ -110,9 +147,11 @@
             await UpdateGames();
         }
 
-        private async Task StopServerClick()
+        private async Task StopServerClick(Game game)
         {
-            await HttpClient.GetAsync(Route(GameRoute, "StopServer"));
+            string jsonPayload = JsonSerializer.Serialize(game);
+
+            await HttpClient.PostAsync(Route(GameRoute, "StopServer"), new StringContent(jsonPayload, Encoding.UTF8, "application/json"));
 
             await UpdateGames();
         }

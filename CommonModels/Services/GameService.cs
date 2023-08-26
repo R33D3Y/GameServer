@@ -116,10 +116,12 @@
             }
         }
 
-        public void StopGameServer()
+        public void StopGameServer(Game game)
         {
             if (_gameServerProcess is not null)
             {
+                SendCommand(_gameServerProcess, "Exit");
+
                 _gameServerProcess.Close();
                 _gameServerProcess = null;
             }
@@ -182,7 +184,7 @@
             else
             {
                 // Handle the case where the process is not running or the command is empty
-                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "STEAMCMD ERROR", "SteamCMD process is not running, or the command is empty.");
+                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "ERROR", "Process is not running, or the command is empty.");
             }
         }
 

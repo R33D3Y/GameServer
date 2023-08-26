@@ -17,5 +17,7 @@
         public string? GameId { get; set; }
 
         public List<string> ServerConfiguration { get; set; }
+
+        public string ServerExitArgument { get; set; }
     }
 }

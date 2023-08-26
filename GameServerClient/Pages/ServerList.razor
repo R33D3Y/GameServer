@@ -20,7 +20,7 @@
         <MudTd>
             @if (context.IsRunning)
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => StopServerClick())">Stop Server</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => StopServerClick(context))">Stop Server</MudButton>
             }
             else
             {

@@ -31,7 +31,8 @@ namespace GameServerAPI
                 ServerConfiguration = new List<string>
                 {
                     "-config \"serverconfig.txt\"",
-                }
+                },
+                ServerExitArgument = "Exit"
             },
             new Game
             {
