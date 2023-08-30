@@ -122,45 +122,32 @@
             }
         }
 
-        private async Task InstallGameServerClick(Game game)
+        private async Task InstallServerClick(Game game)
         {
             if (game.IsSteam)
             {
-                await InstallServer(game);
+                await Post(game, "InstallServer");
             }
         }
 
-        private async Task StartGameServerClick(Game game)
+        private async Task StartServerClick(Game game)
         {
             if (game.IsInstalled)
             {
-                await StartServer(game);
+                await Post(game, "StartServer");
             }
-        }
-
-        private async Task InstallServer(Game game)
-        {
-            string jsonPayload = JsonSerializer.Serialize(game);
-
-            await HttpClient.PostAsync(Route(GameRoute, "InstallServer"), new StringContent(jsonPayload, Encoding.UTF8, "application/json"));
-
-            await UpdateGames();
         }
 
         private async Task StopServerClick(Game game)
         {
-            string jsonPayload = JsonSerializer.Serialize(game);
-
-            await HttpClient.PostAsync(Route(GameRoute, "StopServer"), new StringContent(jsonPayload, Encoding.UTF8, "application/json"));
-
-            await UpdateGames();
+            await Post(game, "StopServer");
         }
 
-        private async Task StartServer(Game game)
+        private async Task Post(Game game, string endpoint)
         {
             string jsonPayload = JsonSerializer.Serialize(game);
 
-            await HttpClient.PostAsync(Route(GameRoute, "StartServer"), new StringContent(jsonPayload, Encoding.UTF8, "application/json"));
+            await HttpClient.PostAsync(Route(GameRoute, endpoint), new StringContent(jsonPayload, Encoding.UTF8, "application/json"));
 
             await UpdateGames();
         }
