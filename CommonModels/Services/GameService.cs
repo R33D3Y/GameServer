@@ -81,7 +81,10 @@
                 CreateNoWindow = true // Set to true to hide the cmd window
             };
 
-            UpdateConfigurationFile(game);
+            if (game.ServerConfiguration is not null)
+            {
+                UpdateConfigurationFile(game);
+            }
 
             serverProcessInfo.Arguments = game.ServerRunConfiguration;
 

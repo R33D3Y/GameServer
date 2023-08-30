@@ -18,8 +18,10 @@ namespace GameServerAPI
                 Name = "7 Days To Die",
                 IsSteam = true,
                 GameLocation = "7Days2Die",
-                GameExeLocation = string.Empty,
-                GameId = "294420"
+                GameExeLocation = "7DaysToDieServer.exe",
+                GameId = "294420",
+                ServerRunConfiguration = $"-quit -batchmode -nographics -configfile=serverconfig.xml -dedicated",
+                ServerExitArgument = "shutdown"
             },
             new Game
             {
