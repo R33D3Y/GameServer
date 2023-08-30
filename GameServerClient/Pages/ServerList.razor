@@ -5,28 +5,41 @@
 
 <MudTable Items="games" TItem="Games">
     <HeaderContent>
-        <MudTh>Game</MudTh>
-        <MudTh />
-        <MudTh />
+        <MudTh>Game Servers</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Name</MudTd>
-        <MudTd>
+        <MudExpansionPanel Text="@context.Name">
             @if (!context.IsInstalled && context.IsSteam)
             {
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => InstallGameServerClick(context))">Install Server</MudButton>
             }
-        </MudTd>
-        <MudTd>
-            @if (context.IsRunning)
-            {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => StopServerClick(context))">Stop Server</MudButton>
-            }
             else
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => StartGameServerClick(context))">Start Server</MudButton>
+                @if (context.IsRunning)
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => StopServerClick(context))">Stop Server</MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => StartGameServerClick(context))">Start Server</MudButton>
+                }
             }
-        </MudTd>
+
+            <MudTable Items="context.ServerConfiguration" Context="item">
+                <HeaderContent>
+                    <MudTh>Is Enabled</MudTh>
+                    <MudTh>Paramater</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>
+                        <MudSwitch @bind-Checked="item.Value.IsEnabled" Color="Color.Primary" />
+                    </MudTd>
+                    <MudTd>
+                        <MudTextField @bind-Value="item.Value.Content" Label="@item.Key" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudExpansionPanel>
     </RowTemplate>
 </MudTable>
 
