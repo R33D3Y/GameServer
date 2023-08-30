@@ -50,8 +50,9 @@ namespace GameServerAPI
                 Name = "Conan Exiles",
                 IsSteam = true,
                 GameLocation = "ConanExiles",
-                GameExeLocation = string.Empty,
-                GameId = "443030"
+                GameExeLocation = "ConanSandboxServer.exe",
+                GameId = "443030",
+                ServerRunConfiguration = $"-log",
             },
         };
     }
