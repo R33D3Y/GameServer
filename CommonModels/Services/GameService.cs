@@ -6,6 +6,8 @@
     using Microsoft.AspNetCore.SignalR;
     using System;
     using System.Diagnostics;
+    using System.Reflection.Metadata;
+    using System.Text;
 
     public class GameService : IDisposable
     {
@@ -80,14 +82,9 @@
                 CreateNoWindow = true // Set to true to hide the cmd window
             };
 
-            string arguments = string.Empty;
+            UpdateConfigurationFile(game);
 
-            foreach (string argument in game.ServerConfiguration)
-            {
-                arguments += argument + " ";
-            }
-
-            serverProcessInfo.Arguments = arguments;
+            serverProcessInfo.Arguments = game.ServerRunConfiguration;
 
             // Start the process
             _gameServerProcess = new Process();
@@ -98,6 +95,38 @@
 
             _gameServerProcess.BeginOutputReadLine();
             _gameServerProcess.BeginErrorReadLine();
+        }
+
+        private void UpdateConfigurationFile(Game game)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            foreach (var configuration in game.ServerConfiguration)
+            {
+                if (configuration.Value.IsEnabled)
+                {
+                    stringBuilder.Append($"{configuration.Key}={configuration.Value.Content}\n");
+                }
+                else
+                {
+                    stringBuilder.Append($"#{configuration.Key}={configuration.Value.Content}\n");
+                }
+            }
+
+            string configurationFile = stringBuilder.ToString();
+
+            try
+            {
+                // Open the file for writing
+                using StreamWriter writer = new StreamWriter(Path.Combine(GameServerLocation, game.GameLocation, game.ServerConfigurationLocation));
+
+                // Write the content to the file
+                writer.WriteLine(configurationFile.ToString());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred: " + ex.Message);
+            }
         }
 
         public async Task SendInputToGameServer(string command)

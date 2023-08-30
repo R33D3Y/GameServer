@@ -16,8 +16,25 @@
 
         public string? GameId { get; set; }
 
-        public List<string> ServerConfiguration { get; set; }
+        public string ServerRunConfiguration { get; set; }
+
+        public string ServerConfigurationLocation { get; set; }
+
+        public Dictionary<string, ServerConfigEntry> ServerConfiguration { get; set; }
 
         public string ServerExitArgument { get; set; }
+    }
+
+    public class ServerConfigEntry
+    {
+        public ServerConfigEntry(bool isEnabled, string content)
+        {
+            IsEnabled = isEnabled;
+            Content = content;
+        }
+
+        public bool IsEnabled { get; set; }
+
+        public string Content { get; set; }
     }
 }

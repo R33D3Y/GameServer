@@ -28,9 +28,18 @@ namespace GameServerAPI
                 GameLocation = "Terraria",
                 GameExeLocation = "TerrariaServer.exe",
                 GameId = "105600",
-                ServerConfiguration = new List<string>
+                ServerConfigurationLocation = "serverconfig.txt",
+                ServerRunConfiguration = $"-config \"serverconfig.txt\"",
+                ServerConfiguration = new Dictionary<string, ServerConfigEntry>
                 {
-                    "-config \"serverconfig.txt\"",
+                    { "world", new ServerConfigEntry(true, "F:\\GameServers\\Terraria\\Worlds\\world1.wld")},
+                    { "autocreate", new ServerConfigEntry(true, "1")},
+                    { "seed", new ServerConfigEntry(true, "AwesomeSeed")},
+                    { "worldname", new ServerConfigEntry(true, "world1")},
+                    { "difficulty", new ServerConfigEntry(true, "0")},
+                    { "maxplayers", new ServerConfigEntry(false, "8")},
+                    { "password", new ServerConfigEntry(true, "password")},
+                    { "motd", new ServerConfigEntry(true, "Please don't cut the purple trees!")},
                 },
                 ServerExitArgument = "Exit"
             },
