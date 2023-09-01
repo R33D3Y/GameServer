@@ -1,3 +1,4 @@
+using CommonModels;
 using GameServerClient;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -9,9 +10,9 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 // Set the base address for the HttpClient
 #if DEBUG
-    builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:6001") });
+    builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(Settings.LocalHost) });
 #else
-    builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://192.168.0.17:6001") });
+    builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(Settings.RemoteHost) });
 #endif
 
 builder.Services.AddMudServices();

@@ -21,11 +21,11 @@
 
 #if DEBUG
             hubConnection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:6001/chathub")
+                .WithUrl($"{Settings.LocalHost}/chathub")
                 .Build();
 #else
             hubConnection = new HubConnectionBuilder()
-                .WithUrl("http://192.168.0.17:6001/chathub")
+                .WithUrl($"{Settings.RemoteHost}/chathub")
                 .Build();
 #endif
 
