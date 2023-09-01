@@ -59,8 +59,6 @@ app.UseRouting();
 
 app.UseCors("AllowBlazorApp");
 
-app.UseHttpsRedirection();
-
 app.UseAuthorization();
 app.UseResponseCompression();
 

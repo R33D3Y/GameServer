@@ -12,9 +12,15 @@ namespace GameServerClient.Pages
 
         //protected override async Task OnInitializedAsync()
         //{
-        //    hubConnection = new HubConnectionBuilder()
-        //        .WithUrl("https://localhost:6001/chathub")
-        //        .Build();
+//#if DEBUG
+//        hubConnection = new HubConnectionBuilder()
+//                .WithUrl("http://localhost:6001/chathub")
+//                .Build();
+//#else
+//            hubConnection = new HubConnectionBuilder()
+//                .WithUrl("http://192.168.0.17:6001/chathub")
+//                .Build();
+//#endif
 
         //    hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
         //    {
