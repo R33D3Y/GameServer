@@ -6,6 +6,7 @@
     using Microsoft.AspNetCore.SignalR;
     using System;
     using System.Diagnostics;
+    using System.Reflection.Metadata;
     using System.Text;
 
     public class GameService : IDisposable
@@ -128,6 +129,8 @@
                 if (content is not null && content.Contains("REPLACEWITHPATH"))
                 {
                     content = content.Replace("REPLACEWITHPATH", Path.Combine(GameServerLocation, game.GameLocation));
+
+                    Directory.CreateDirectory(Path.GetDirectoryName(content));
                 }
 
                 if (configuration.Value.IsEnabled)
