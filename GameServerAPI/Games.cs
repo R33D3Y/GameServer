@@ -34,7 +34,7 @@ namespace GameServerAPI
                 ServerRunConfiguration = $"-config \"serverconfig.txt\"",
                 ServerConfiguration = new Dictionary<string, ServerConfigEntry>
                 {
-                    { "world", new ServerConfigEntry(true, "F:\\GameServers\\Terraria\\Worlds\\world1.wld")},
+                    { "world", new ServerConfigEntry(true, "REPLACEWITHPATH\\Worlds\\world1.wld")},
                     { "autocreate", new ServerConfigEntry(true, "1")},
                     { "seed", new ServerConfigEntry(true, "AwesomeSeed")},
                     { "worldname", new ServerConfigEntry(true, "world1")},
@@ -52,7 +52,7 @@ namespace GameServerAPI
                 GameLocation = "ConanExiles",
                 GameExeLocation = "ConanSandboxServer.exe",
                 GameId = "443030",
-                ServerRunConfiguration = $"-log",
+                ServerRunConfiguration = $"-log -userdir=\"REPLACEWITHPATH\\World0\"",
             },
         };
     }

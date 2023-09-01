@@ -23,6 +23,15 @@
         public Dictionary<string, ServerConfigEntry>? ServerConfiguration { get; set; }
 
         public string? ServerExitArgument { get; set; }
+
+        public ConfigurationFileType FileType { get; set; }
+    }
+
+    public enum ConfigurationFileType
+    {
+        Text,
+        XML,
+        INI
     }
 
     public class ServerConfigEntry

@@ -64,6 +64,9 @@
             SendCommand(_steamCmdProcess, $"{SteamProcess} {SteamForceInstall} {Path.Combine(GameServerLocation, game.GameLocation)} {SteamLoginPrompt} {SteamLogin.Username} {SteamAppUpdate} {game.GameId}");
 
             _steamCmdInputAllowedEvent.WaitOne();
+
+            SendCommand(_steamCmdProcess, "quit");
+
             _steamCmdProcess.Close();
             _steamCmdProcess = null;
         }
@@ -86,7 +89,14 @@
                 UpdateConfigurationFile(game);
             }
 
-            serverProcessInfo.Arguments = game.ServerRunConfiguration;
+            string? runTimeArguments = game.ServerRunConfiguration;
+
+            if (runTimeArguments is not null && runTimeArguments.Contains("REPLACEWITHPATH"))
+            {
+                runTimeArguments = runTimeArguments.Replace("REPLACEWITHPATH", Path.Combine(GameServerLocation, game.GameLocation));
+            }
+
+            serverProcessInfo.Arguments = runTimeArguments;
 
             // Start the process
             _gameServerProcess = new Process();
@@ -105,13 +115,20 @@
 
             foreach (var configuration in game.ServerConfiguration)
             {
+                string? content = configuration.Value.Content;
+
+                if (content is not null && content.Contains("REPLACEWITHPATH"))
+                {
+                    content = content.Replace("REPLACEWITHPATH", Path.Combine(GameServerLocation, game.GameLocation));
+                }
+
                 if (configuration.Value.IsEnabled)
                 {
-                    stringBuilder.Append($"{configuration.Key}={configuration.Value.Content}\n");
+                    stringBuilder.Append($"{configuration.Key}={content}\n");
                 }
                 else
                 {
-                    stringBuilder.Append($"#{configuration.Key}={configuration.Value.Content}\n");
+                    stringBuilder.Append($"#{configuration.Key}={content}\n");
                 }
             }
 
@@ -151,9 +168,16 @@
         {
             if (_gameServerProcess is not null)
             {
-                SendCommand(_gameServerProcess, "Exit");
+                if (game.ServerExitArgument == null)
+                {
+                    _gameServerProcess.Kill();
+                }
+                else
+                {
+                    SendCommand(_gameServerProcess, game.ServerExitArgument);
+                    _gameServerProcess.Close();
+                }
 
-                _gameServerProcess.Close();
                 _gameServerProcess = null;
             }
         }
@@ -210,6 +234,9 @@
             if (process is not null && !string.IsNullOrEmpty(command))
             {
                 // Send the command to the standard input of the process
+                process.StandardInput.WriteLine(command);
+                process.StandardInput.WriteLine(command);
+                process.StandardInput.WriteLine(command);
                 process.StandardInput.WriteLine(command);
             }
             else
