@@ -11,6 +11,7 @@ namespace GameServerAPI
                 Name = "Minecraft",
                 IsSteam = false,
                 GameLocation = "Minecraft",
+                IsWorldInConfigs = true,
                 GameExeLocation = string.Empty,
             },
             new Game
@@ -20,6 +21,7 @@ namespace GameServerAPI
                 GameLocation = "7Days2Die",
                 GameExeLocation = "7DaysToDieServer.exe",
                 GameId = "294420",
+                IsWorldInConfigs = true,
                 ServerRunConfiguration = $"-quit -batchmode -nographics -configfile=serverconfig.xml -dedicated",
                 ServerExitArgument = "shutdown"
             },
@@ -30,6 +32,7 @@ namespace GameServerAPI
                 GameLocation = "Terraria",
                 GameExeLocation = "TerrariaServer.exe",
                 GameId = "105600",
+                IsWorldInConfigs = true,
                 ServerConfigurationLocation = "serverconfig.txt",
                 ServerRunConfiguration = $"-config \"serverconfig.txt\"",
                 ServerConfiguration = new Dictionary<string, ServerConfigEntry>
@@ -52,7 +55,8 @@ namespace GameServerAPI
                 GameLocation = "ConanExiles",
                 GameExeLocation = "ConanSandboxServer.exe",
                 GameId = "443030",
-                ServerRunConfiguration = $"-log -userdir=\"REPLACEWITHPATH\\World0\"",
+                IsWorldInConfigs = false,
+                ServerRunConfiguration = $"-log -userdir=\"REPLACEWITHPATH\\WORLDNAME\"",
             },
         };
     }

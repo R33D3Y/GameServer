@@ -25,6 +25,10 @@
         public string? ServerExitArgument { get; set; }
 
         public ConfigurationFileType FileType { get; set; }
+
+        public bool IsWorldInConfigs { get; set; }
+
+        public string? WorldName { get; set; }
     }
 
     public enum ConfigurationFileType

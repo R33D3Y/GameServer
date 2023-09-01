@@ -91,9 +91,17 @@
 
             string? runTimeArguments = game.ServerRunConfiguration;
 
-            if (runTimeArguments is not null && runTimeArguments.Contains("REPLACEWITHPATH"))
+            if (runTimeArguments is not null)
             {
-                runTimeArguments = runTimeArguments.Replace("REPLACEWITHPATH", Path.Combine(GameServerLocation, game.GameLocation));
+                if (runTimeArguments.Contains("REPLACEWITHPATH"))
+                {
+                    runTimeArguments = runTimeArguments.Replace("REPLACEWITHPATH", Path.Combine(GameServerLocation, game.GameLocation));
+                }
+
+                if (runTimeArguments.Contains("WORLDNAME"))
+                {
+                    runTimeArguments = runTimeArguments.Replace("WORLDNAME", game.WorldName);
+                }
             }
 
             serverProcessInfo.Arguments = runTimeArguments;
