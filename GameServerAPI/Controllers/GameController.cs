@@ -45,8 +45,8 @@ namespace GameServerAPI.Controllers
                                     continue;
                                 }
 
-                                bool isenabled = !line.StartsWith('#');
-                                string[] splitLine = line.Replace("#", "").Split('=');
+                                bool isenabled = !line.StartsWith(game.ServerConfiguration.DisabledString);
+                                string[] splitLine = line.Replace(game.ServerConfiguration.DisabledString, "").Split(game.ServerConfiguration.KeyValueSplitter);
                                 ServerConfigEntry serverConfigEntry = isenabled ? new ServerConfigEntry(true, splitLine[1]) : new ServerConfigEntry(false, splitLine[1]);
 
                                 if (game.ServerConfiguration.Entries.ContainsKey(splitLine[0]))
