@@ -20,6 +20,10 @@
 
         public string? ServerConfigurationLocation { get; set; }
 
+        public string? ServerConfigurationKeyValueSplitter { get; set; }
+
+        public string? ServerConfigurationDisabled { get; set; }
+
         public Dictionary<string, ServerConfigEntry>? ServerConfiguration { get; set; }
 
         public string? ServerExitArgument { get; set; }

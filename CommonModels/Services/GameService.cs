@@ -135,11 +135,11 @@
 
                 if (configuration.Value.IsEnabled)
                 {
-                    stringBuilder.Append($"{configuration.Key}={content}\n");
+                    stringBuilder.Append($"{configuration.Key}{game.ServerConfigurationKeyValueSplitter}{content}\n");
                 }
                 else
                 {
-                    stringBuilder.Append($"#{configuration.Key}={content}\n");
+                    stringBuilder.Append($"{game.ServerConfigurationDisabled}{configuration.Key}{game.ServerConfigurationKeyValueSplitter}{content}\n");
                 }
             }
 

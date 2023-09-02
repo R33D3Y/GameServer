@@ -46,7 +46,9 @@ namespace GameServerAPI
                     { "password", new ServerConfigEntry(true, "password")},
                     { "motd", new ServerConfigEntry(true, "Please don't cut the purple trees!")},
                 },
-                ServerExitArgument = "Exit"
+                ServerExitArgument = "Exit",
+                ServerConfigurationDisabled = "#",
+                ServerConfigurationKeyValueSplitter = "=",
             },
             new Game
             {
@@ -57,6 +59,30 @@ namespace GameServerAPI
                 GameId = "443030",
                 IsWorldInConfigs = false,
                 ServerRunConfiguration = $"-log -userdir=\"REPLACEWITHPATH\\WORLDNAME\"",
+            },
+            new Game
+            {
+                Name = "The Forest",
+                IsSteam = true,
+                GameLocation = "TheForest",
+                GameExeLocation = "TheForestDedicatedServer.exe",
+                GameId = "556450",
+                IsWorldInConfigs = true,
+                ServerConfigurationLocation = "Config.cfg",
+                ServerRunConfiguration = $"-configfilepath \"REPLACEWITHPATH\\Config.cfg\"",
+                ServerConfiguration = new Dictionary<string, ServerConfigEntry>
+                {
+                    { "serverName", new ServerConfigEntry(true, "R33D3Ys Server")},
+                    { "serverPassword", new ServerConfigEntry(true, "password")},
+                    { "serverPlayers", new ServerConfigEntry(true, "8")},
+                    { "serverAutoSaveInterval", new ServerConfigEntry(true, "10")},
+                    { "slot", new ServerConfigEntry(true, "1")},
+                    { "showLogs", new ServerConfigEntry(true, "on")},
+                    { "saveFolderPath", new ServerConfigEntry(true, "REPLACEWITHPATH\\Worlds\\")},
+                    { "initType", new ServerConfigEntry(true, "New")},
+                },
+                ServerConfigurationDisabled = "//",
+                ServerConfigurationKeyValueSplitter = " ",
             },
         };
     }
