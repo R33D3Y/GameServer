@@ -27,9 +27,9 @@ namespace GameServerAPI.Controllers
                 game.IsInstalled = Directory.Exists(Path.Combine(_gameService.GameServerLocation, game.GameLocation));
                 game.IsRunning = _gameService.CurrentlyRunningGame?.Equals(game.Name) ?? false;
 
-                if (game.ServerConfigurationLocation is not null)
+                if (game.ServerConfiguration.FileLocation is not null)
                 {
-                    string configurationPath = Path.Combine(_gameService.GameServerLocation, game.GameLocation, game.ServerConfigurationLocation);
+                    string configurationPath = Path.Combine(_gameService.GameServerLocation, game.GameLocation, game.ServerConfiguration.FileLocation);
                     if (System.IO.File.Exists(configurationPath))
                     {
                         try
@@ -49,13 +49,13 @@ namespace GameServerAPI.Controllers
                                 string[] splitLine = line.Replace("#", "").Split('=');
                                 ServerConfigEntry serverConfigEntry = isenabled ? new ServerConfigEntry(true, splitLine[1]) : new ServerConfigEntry(false, splitLine[1]);
 
-                                if (game.ServerConfiguration.ContainsKey(splitLine[0]))
+                                if (game.ServerConfiguration.Entries.ContainsKey(splitLine[0]))
                                 {
-                                    game.ServerConfiguration[splitLine[0]] = serverConfigEntry;
+                                    game.ServerConfiguration.Entries[splitLine[0]] = serverConfigEntry;
                                 }
                                 else
                                 {
-                                    game.ServerConfiguration.Add(splitLine[0], serverConfigEntry);
+                                    game.ServerConfiguration.Entries.Add(splitLine[0], serverConfigEntry);
                                 }
                             }
                         }

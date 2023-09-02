@@ -30,14 +30,14 @@
         <MudTd>
             <MudExpansionPanel Text="@context.Name">
 
-                @if(!context.IsWorldInConfigs)
+                @if(!context.ServerConfiguration.IsWorldInConfigs)
                 {
                     <MudTd>
                         <MudTextField @bind-Value="context.WorldName" Label="World name" Variant="Variant.Outlined" Margin="Margin.Dense" />
                     </MudTd>
                 }
 
-                <MudTable Items="context.ServerConfiguration" Context="item">
+                <MudTable Items="context.ServerConfiguration.Entries" Context="item">
                     <HeaderContent>
                         <MudTh>Is Enabled</MudTh>
                         <MudTh>Paramater</MudTh>

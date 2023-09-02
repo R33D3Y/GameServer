@@ -90,7 +90,7 @@
                 UpdateConfigurationFile(game);
             }
 
-            string? runTimeArguments = game.ServerRunConfiguration;
+            string? runTimeArguments = game.ServerConfiguration.RunArguments;
 
             if (runTimeArguments is not null)
             {
@@ -122,7 +122,7 @@
         {
             StringBuilder stringBuilder = new StringBuilder();
 
-            foreach (var configuration in game.ServerConfiguration)
+            foreach (var configuration in game.ServerConfiguration.Entries)
             {
                 string? content = configuration.Value.Content;
 
@@ -135,11 +135,11 @@
 
                 if (configuration.Value.IsEnabled)
                 {
-                    stringBuilder.Append($"{configuration.Key}{game.ServerConfigurationKeyValueSplitter}{content}\n");
+                    stringBuilder.Append($"{configuration.Key}{game.ServerConfiguration.KeyValueSplitter}{content}\n");
                 }
                 else
                 {
-                    stringBuilder.Append($"{game.ServerConfigurationDisabled}{configuration.Key}{game.ServerConfigurationKeyValueSplitter}{content}\n");
+                    stringBuilder.Append($"{game.ServerConfiguration.DisabledString}{configuration.Key}{game.ServerConfiguration.KeyValueSplitter}{content}\n");
                 }
             }
 
@@ -148,7 +148,7 @@
             try
             {
                 // Open the file for writing
-                using StreamWriter writer = new StreamWriter(Path.Combine(GameServerLocation, game.GameLocation, game.ServerConfigurationLocation));
+                using StreamWriter writer = new StreamWriter(Path.Combine(GameServerLocation, game.GameLocation, game.ServerConfiguration.FileLocation));
 
                 // Write the content to the file
                 writer.WriteLine(configurationFile.ToString());
@@ -179,13 +179,13 @@
         {
             if (_gameServerProcess is not null)
             {
-                if (game.ServerExitArgument == null)
+                if (game.ServerConfiguration.ExitArgument == null)
                 {
                     _gameServerProcess.Kill();
                 }
                 else
                 {
-                    SendCommand(_gameServerProcess, game.ServerExitArgument);
+                    SendCommand(_gameServerProcess, game.ServerConfiguration.ExitArgument);
                     _gameServerProcess.Close();
                 }
 

@@ -16,23 +16,28 @@
 
         public string? GameId { get; set; }
 
-        public string? ServerRunConfiguration { get; set; }
+        public string? WorldName { get; set; }
 
-        public string? ServerConfigurationLocation { get; set; }
+        public ServerConfiguration? ServerConfiguration { get; set; }
+    }
 
-        public string? ServerConfigurationKeyValueSplitter { get; set; }
+    public class ServerConfiguration
+    {
+        public string? RunArguments { get; set; }
 
-        public string? ServerConfigurationDisabled { get; set; }
+        public string? FileLocation { get; set; }
 
-        public Dictionary<string, ServerConfigEntry>? ServerConfiguration { get; set; }
+        public string? KeyValueSplitter { get; set; }
 
-        public string? ServerExitArgument { get; set; }
+        public string? DisabledString { get; set; }
 
-        public ConfigurationFileType FileType { get; set; }
+        public Dictionary<string, ServerConfigEntry>? Entries { get; set; }
+
+        public string? ExitArgument { get; set; }
 
         public bool IsWorldInConfigs { get; set; }
 
-        public string? WorldName { get; set; }
+        public ConfigurationFileType FileType { get; set; }
     }
 
     public enum ConfigurationFileType
