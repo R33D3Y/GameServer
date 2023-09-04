@@ -64,7 +64,7 @@
                     await InvokeAsync(StateHasChanged);
 
                     // Introduce a delay to control the rate of updates
-                    await Task.Delay(50); // Adjust the delay time as needed
+                    await Task.Yield(); // Adjust the delay time as needed
                 }
                 finally
                 {
@@ -165,9 +165,13 @@
 
         private async Task AddTimelineItem(string message)
         {
+            if (messages.Count > 100)
+            {
+                messages.RemoveAt(0);
+            }
+
             // Add the new item to the 'messages' collection (assuming 'messages' is your list of timeline items)
             messages.Add(message);
-            StateHasChanged(); // Notify Blazor to re-render the component with the new item
 
             // Scroll to the bottom after the new item is added and the component is re-rendered
             await JSRuntime.InvokeVoidAsync("scrollToBottom");
