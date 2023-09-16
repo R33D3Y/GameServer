@@ -6,8 +6,8 @@
     using Microsoft.AspNetCore.SignalR;
     using System;
     using System.Diagnostics;
-    using System.Reflection.Metadata;
     using System.Text;
+    using System.Timers;
 
     public class GameService : IDisposable
     {
@@ -34,6 +34,11 @@
             GameServerLocation = serverLocation;
 
             SteamLogin.Username = JsonManager.GetPropertyValue("Username");
+
+            Timer batchTimer = new Timer(500);
+            batchTimer.Elapsed += OnBatchTimerElapsed;
+            batchTimer.AutoReset = true;
+            batchTimer.Start();
         }
 
         public void StartAndUpdateSteamCMD(Game game)
@@ -161,7 +166,7 @@
 
         public async Task SendInputToGameServer(string command)
         {
-            await _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "USER COMMAND", command);
+            SendHubMessage("USER COMMAND", command);
 
             if (_gameServerProcess is not null && !string.IsNullOrEmpty(command))
             {
@@ -171,7 +176,7 @@
             else
             {
                 // Handle the case where the process is not running or the command is empty
-                await _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "SERVER ERROR", "Server process is not running, or the command is empty.");
+                SendHubMessage("SERVER ERROR", "Server process is not running, or the command is empty.");
             }
         }
 
@@ -210,7 +215,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "STEAMCMD ERROR", HideSensitivePhrase(e.Data, SteamLogin.Username));
+                SendHubMessage("STEAMCMD ERROR", HideSensitivePhrase(e.Data, SteamLogin.Username));
             }
         }
 
@@ -218,7 +223,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "SERVER", HideSensitivePhrase(e.Data, SteamLogin.Username));
+                SendHubMessage("SERVER", HideSensitivePhrase(e.Data, SteamLogin.Username));
             }
         }
 
@@ -226,7 +231,7 @@
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "SERVER ERROR", HideSensitivePhrase(e.Data, SteamLogin.Username));
+                SendHubMessage("SERVER ERROR", HideSensitivePhrase(e.Data, SteamLogin.Username));
             }
         }
 
@@ -240,7 +245,38 @@
             return input.Replace(sensitivePhrase, "*****");
         }
 
-        public void SendCommand(Process process, string command)
+        private readonly Queue<(string, string)> messageQueue = new Queue<(string, string)>();
+
+        private void OnBatchTimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            (string, string)[] messagesToBatch;
+
+            lock (messageQueue)
+            {
+                // Dequeue all messages in the queue to batch them
+                messagesToBatch = messageQueue.ToArray();
+                messageQueue.Clear();
+            }
+
+            if (messagesToBatch.Length > 0)
+            {
+                // Batch the messages into a single message
+                string batchedMessage = string.Join("\n", messagesToBatch);
+
+                // Send the batched message (you'll need your SendMessageAsync() logic here)
+                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "SERVER", batchedMessage);
+            }
+        }
+
+        private void SendHubMessage(string category, string message)
+        {
+            lock (messageQueue)
+            {
+                messageQueue.Enqueue((string.Empty, $"{category} : {message}"));
+            }
+        }
+
+        public async void SendCommand(Process process, string command)
         {
             if (process is not null && !string.IsNullOrEmpty(command))
             {
@@ -253,7 +289,7 @@
             else
             {
                 // Handle the case where the process is not running or the command is empty
-                _chatHubContext.Clients.All.SendAsync("ReceiveMessage", "ERROR", "Process is not running, or the command is empty.");
+                SendHubMessage("ERROR", "Process is not running, or the command is empty.");
             }
         }
 

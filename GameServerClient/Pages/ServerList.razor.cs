@@ -4,7 +4,6 @@
     using Microsoft.AspNetCore.Components.Web;
     using Microsoft.AspNetCore.SignalR.Client;
     using Microsoft.JSInterop;
-    using System.Collections.Concurrent;
     using System.Text;
     using System.Text.Json;
 
@@ -29,50 +28,22 @@
                 .Build();
 #endif
 
-            hubConnection.On<string, string>("ReceiveMessage", async (user, message) =>
+            hubConnection.On<string, string>("ReceiveMessage", async (_, message) =>
             {
-                var encodedMsg = $"{user}: {message}";
+                string[] splitMessage = message.Split('\n');
 
-                // Buffer the message
-                messageBuffer.Enqueue(encodedMsg);
-
-                // Start the flushing process if not already started
-                if (!isFlushingBuffer)
+                foreach (string line in splitMessage)
                 {
-                    isFlushingBuffer = true;
-                    await FlushBuffer();
+                    string tempString = line.Split(',')[1];
+                    tempString = tempString[..^1];
+
+                    await AddTimelineItem(tempString);
                 }
+
+                await InvokeAsync(StateHasChanged);
             });
 
             await hubConnection.StartAsync();
-        }
-
-        private ConcurrentQueue<string> messageBuffer = new ConcurrentQueue<string>();
-        private SemaphoreSlim bufferLock = new SemaphoreSlim(1);
-        private bool isFlushingBuffer = false;
-
-        private async Task FlushBuffer()
-        {
-            while (messageBuffer.TryDequeue(out var bufferedMessage))
-            {
-                await bufferLock.WaitAsync();
-
-                try
-                {
-                    // Simulate UI update with the buffered message
-                    await AddTimelineItem(bufferedMessage);
-                    await InvokeAsync(StateHasChanged);
-
-                    // Introduce a delay to control the rate of updates
-                    await Task.Yield(); // Adjust the delay time as needed
-                }
-                finally
-                {
-                    bufferLock.Release();
-                }
-            }
-
-            isFlushingBuffer = false;
         }
 
         private async Task SendCommand()
